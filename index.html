@@ -73,15 +73,34 @@ function postsRef() {
   return collection(db, 'users', currentUser.uid, 'posts');
 }
 
+const SEED_POSTS = [
+  { id: 's1', titulo: 'Qué es el entrenamiento concurrente y por qué funciona para vos', pilar: 'Educación', formato: 'Carrusel', fecha: '2025-03-24', estado: 'idea', hook: 'La mayoría entrena fuerza O cardio. Los que mejor se ven hacen las dos cosas a la vez.', notas: 'Explicar qué es el entrenamiento concurrente en lenguaje simple. Desmitificar que necesitás hacer cardio por separado.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's2', titulo: 'La primera vez que sentí que mi cuerpo podía cambiar', pilar: 'Conexión', formato: 'Reel', fecha: '2025-03-25', estado: 'idea', hook: 'Con 17 años me fui al gimnasio con mi amigo Facundo. Sin plan, sin idea. Pero algo cambió ahí.', notas: 'Historia personal. El primer cambio físico. Cómo cambió la identidad, no solo el cuerpo. Tono íntimo, directo a cámara.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's3', titulo: 'El método del plato: cómo comer mejor sin dieta ni app', pilar: 'Educación', formato: 'Reel', fecha: '2025-03-26', estado: 'idea', hook: 'No necesitás pesar la comida ni contar calorías. Solo esto.', notas: 'Explicar el método del plato de forma visual y simple. Una idea, sin complicar.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's4', titulo: 'La transformación que no se ve en la foto', pilar: 'Prueba social', formato: 'Reel', fecha: '2025-03-27', estado: 'idea', hook: 'Este resultado no se mide en kilos. Se mide en cómo se para frente al espejo.', notas: 'Usar fotos del cliente. El foco va en la historia detrás — qué cambió en su vida, su energía, su confianza. No solo el físico.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's5', titulo: 'Seguís a 10 coaches, usás la IA, y algo todavía no cierra', pilar: 'Conexión', formato: 'Reel', fecha: '2025-03-28', estado: 'idea', hook: 'Tenés toda la información. Y algo todavía no está funcionando. Por qué.', notas: 'Nombrar en voz alta la frustración de Martín. Tener info pero no ver resultados. Tono honesto, sin vender todavía.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's6', titulo: 'Así funciona el programa: qué pasa desde el día 1', pilar: 'Conversión', formato: 'Carrusel', fecha: '2025-03-29', estado: 'idea', hook: 'No es solo un plan de entrenamiento. Te cuento exactamente qué pasa cuando arrancamos.', notas: 'Slide por slide: diagnóstico, llamada inicial, plan personalizado, seguimiento diario, ajustes semanales, check-in mensual. Sin vender agresivo.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's7', titulo: 'La motivación te arranca. La constancia te transforma.', pilar: 'Educación', formato: 'Reel', fecha: '2025-03-30', estado: 'idea', hook: 'Esperás tener ganas para entrenar. Ese es el error.', notas: 'Reel corto, 30 segundos. Un concepto simple dicho directo. El domingo Martín piensa en la semana que viene.', metrics: null, updatedAt: new Date().toISOString() },
+];
+
+async function seedIfEmpty(snap) {
+  if (snap.empty) {
+    for (const post of SEED_POSTS) {
+      await setDoc(doc(postsRef(), post.id), post);
+    }
+  }
+}
+
 function subscribeToposts() {
   if (unsubscribePosts) unsubscribePosts();
   const q = query(postsRef(), orderBy('fecha', 'asc'));
-  unsubscribePosts = onSnapshot(q, (snap) => {
+  unsubscribePosts = onSnapshot(q, async (snap) => {
+    await seedIfEmpty(snap);
     window.posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderAll();
   }, (err) => {
-    // orderBy needs index on first run — fallback without ordering
-    unsubscribePosts = onSnapshot(postsRef(), (snap) => {
+    unsubscribePosts = onSnapshot(postsRef(), async (snap) => {
+      await seedIfEmpty(snap);
       window.posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderAll();
     });
