@@ -257,6 +257,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .idea-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
 .idea-fmt{font-size:10px;color:var(--text3);}
 
+/* NEW: auto idea generator highlight */
+.idea-card.auto-idea-highlight{
+  border-color:rgba(200,240,110,0.85);
+  box-shadow:0 0 0 2px rgba(200,240,110,0.14);
+  transition:box-shadow 0.2s,border-color 0.2s;
+}
+
 /* METRICS */
 .metrics-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px;}
 .pm-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:11px 15px;display:grid;grid-template-columns:1fr auto auto auto auto;gap:10px;align-items:center;cursor:pointer;transition:border-color 0.12s;}
@@ -415,6 +422,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="page-header">
         <div><div class="page-title">Banco de ideas</div><div class="page-sub">Todo tu contenido</div></div>
         <button class="btn" onclick="openModal()">+ Nueva idea</button>
+      </div>
+      <!-- NEW: auto idea generator -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="b-label" style="margin-bottom:10px">Generar idea automáticamente</div>
+        <div class="form-group" style="margin-bottom:12px">
+          <textarea class="form-textarea" id="gen-idea-input" placeholder="Escribí una idea, tema o pensamiento..."></textarea>
+        </div>
+        <div class="modal-actions" style="justify-content:flex-end;margin-top:6px">
+          <button class="btn" onclick="generateIdeaAuto()">Generar idea</button>
+        </div>
       </div>
       <div class="filters">
         <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
@@ -972,7 +989,7 @@ function renderIdeas() {
   const g = document.getElementById('ideas-grid');
   if (list.length === 0) { g.innerHTML = `<div class="empty" style="grid-column:1/-1">Sin contenido acá todavía.<br>Usá "+ Nueva idea" para agregar.</div>`; return; }
   g.innerHTML = list.map(p => `
-    <div class="idea-card" onclick="openModal('${p.id}')">
+    <div class="idea-card" data-post-id="${p.id}" onclick="openModal('${p.id}')">
       <div class="idea-meta">
         <span class="badge ${PILAR_CLASS[p.pilar]}">${p.pilar}</span>
         <span class="badge ${(() => { const est = normalizeEstado(p.estado); return est==='Publicado'?'estado-publicado':(est==='Idea'?'estado-idea':'estado-proceso'); })()}">${normalizeEstado(p.estado)}</span>
@@ -1005,6 +1022,144 @@ async function duplicateIdea(postId) {
     showToast('Idea duplicada ✓');
   } catch (e) {
     showToast('Error al duplicar');
+    console.error(e);
+  }
+}
+
+// NEW: auto idea generator
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+function cleanTopic(raw) {
+  const t = String(raw || '').trim().replace(/\s+/g, ' ');
+  return t;
+}
+function extractTemaFromInput(inputText) {
+  // NEW: smart-ish topic extraction (sin APIs, solo heurística)
+  const text = String(inputText || '').trim();
+  if (!text) return '';
+  const lower = text.toLowerCase();
+
+  const keywords = ['sobre', 'de', 'acerca de'];
+  for (const kw of keywords) {
+    const idx = lower.indexOf(kw);
+    if (idx >= 0) {
+      const remainder = text.slice(idx + kw.length).trim();
+      // stop at punctuation/newline to keep it short
+      const cut = remainder.split(/[\n\r\.\!\?\,;]/)[0].trim();
+      const cleaned = cleanTopic(cut);
+      if (cleaned) return cleaned;
+    }
+  }
+
+  // fallback: use first 5-7 words
+  const words = text.split(/\s+/).filter(Boolean);
+  const trimmed = words.slice(0, 6).join(' ');
+  return cleanTopic(trimmed);
+}
+function inferPilarFromText(inputText) {
+  const s = String(inputText || '').toLowerCase();
+  if (/(error|mito|verdad|miente|realmente)/i.test(s)) return 'Educación';
+  if (/(cliente|caso|historia|antes|después|despues)/i.test(s)) return 'Prueba social';
+  if (/(tip|cómo|como|mejorar|mejor|guía|guia|consejo)/i.test(s)) return 'Educación';
+  return 'Educación';
+}
+function pickFormatoFromText(inputText) {
+  // NEW: format priority (rule-based)
+  const lower = String(inputText || '').toLowerCase();
+  if (/(carrusel|slides|slide)/i.test(lower)) return 'Carrusel';
+  if (/(post|publicación|post)/i.test(lower)) return 'Post estático';
+  return pickRandom(['Reel', 'Carrusel', 'Post estático']); // default mix
+}
+function generateTitle(tema) {
+  const n = pickRandom([3, 4, 5]);
+  const templates = [
+    `${n} errores sobre ${tema}`,
+    `Lo que nadie te dice sobre ${tema}`,
+    `Cómo mejorar ${tema}`,
+    `El error más común en ${tema}`,
+    `La verdad sobre ${tema}`,
+  ];
+  return pickRandom(templates);
+}
+function generateHook(tema) {
+  const hooks = [
+    `Si estás haciendo esto, estás perdiendo resultados en ${tema}...`,
+    `Este es el error más común en ${tema}`,
+    `Nadie te explica esto sobre ${tema}`,
+    `El mito que te frena con ${tema}`,
+  ];
+  return pickRandom(hooks);
+}
+function generateBody(tema) {
+  // NEW: body/description as short structure
+  const t = tema || 'este tema';
+  const b1 = `Qué está pasando realmente con ${t}`;
+  const b2 = `El error #1 y cómo corregirlo en 3 pasos`;
+  const b3 = `Mini-plan para aplicar hoy: ${t} sin vueltas`;
+  return `• ${b1}\n• ${b2}\n• ${b3}`;
+}
+async function generateIdeaAuto() {
+  // NEW: UI input -> generated idea -> save in idea bank
+  const inputEl = document.getElementById('gen-idea-input');
+  const raw = inputEl ? inputEl.value : '';
+  const inputText = String(raw || '').trim();
+  if (!inputText) { showToast('Escribí una idea primero'); return; }
+
+  const tema = extractTemaFromInput(inputText);
+  const pilar = inferPilarFromText(inputText);
+  const formato = pickFormatoFromText(inputText);
+  const titulo = generateTitle(tema || 'tu tema');
+  const hook = generateHook(tema || 'tu tema');
+  const notas = generateBody(tema);
+
+  const newId = Date.now().toString() + '_' + Math.random().toString(16).slice(2);
+  const idea = {
+    id: newId,
+    titulo,
+    pilar,
+    formato,
+    fecha: '',
+    estado: 'Idea',
+    hook,
+    notas,
+    cta: '',
+    metrics: null,
+    updatedAt: new Date().toISOString()
+  };
+
+  // UX: clear input immediately
+  inputEl.value = '';
+
+  // Ensure it appears in the current filter (UX: scroll to it)
+  activeFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const btnTodos = Array.from(document.querySelectorAll('.filter-btn')).find(b => {
+    const onclick = b.getAttribute('onclick') || '';
+    return onclick.includes("setFilter('all'");
+  });
+  if (btnTodos) btnTodos.classList.add('active');
+
+  // Optimistic UI: re-render and scroll
+  window.posts.unshift(idea);
+  renderAll();
+
+  setTimeout(() => {
+    const el = document.querySelector(`[data-post-id="${newId}"]`);
+    if (!el) return;
+    el.classList.add('auto-idea-highlight');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => el.classList.remove('auto-idea-highlight'), 2200);
+  }, 60);
+
+  try {
+    await window.savePostToDb(idea);
+    showToast('Idea generada ✓');
+  } catch (e) {
+    // Revert optimistic insert on failure
+    window.posts = window.posts.filter(p => p.id !== newId);
+    renderAll();
+    showToast('Error al guardar la idea');
     console.error(e);
   }
 }
