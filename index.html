@@ -18,7 +18,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, onSnapshot, query, orderBy }
+import { getFirestore, collection, doc, getDocs, getDoc, setDoc, deleteDoc, onSnapshot, query, orderBy }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ▼▼▼ REEMPLAZÁ CON TU CONFIG DE FIREBASE ▼▼▼
@@ -63,6 +63,7 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById('user-name').textContent = user.displayName || user.email;
     document.getElementById('user-avatar').textContent = (user.displayName || 'U')[0].toUpperCase();
     subscribeToposts();
+    loadBrand();
   } else {
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app-shell').style.display = 'none';
@@ -296,8 +297,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .toast{position:fixed;bottom:22px;right:22px;background:var(--accent);color:#0e0e0c;padding:9px 16px;border-radius:var(--radius);font-size:13px;font-weight:500;z-index:200;transform:translateY(50px);opacity:0;transition:all 0.22s;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
 
-/* EMPTY */
-.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
+.estado-grabar{background:rgba(93,202,165,0.1);color:#5dcaa5;border:1px solid rgba(93,202,165,0.25);}
+.story-badge{background:rgba(168,159,245,0.15);color:#a89ff5;border:1px solid rgba(168,159,245,0.3);font-size:9px;padding:1px 5px;border-radius:3px;}
+.brand-edit-field{width:100%;background:var(--bg3);border:1px solid transparent;border-radius:var(--radius);padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:36px;transition:border-color .15s;cursor:text;}
+.brand-edit-field:hover{border-color:var(--border);}
+.brand-edit-field:focus{outline:none;border-color:var(--border2);background:var(--bg4);}
+.brand-save-row{display:flex;justify-content:flex-end;margin-top:8px;opacity:0;transition:opacity .15s;}
+.brand-section:focus-within .brand-save-row{opacity:1;}
+.grabar-list{display:flex;flex-direction:column;gap:8px;}
+.grabar-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s;}
+.grabar-row:hover{border-color:var(--border2);}
+.grabar-date{font-size:11px;color:var(--text3);min-width:70px;}
+.grabar-title{font-size:13px;color:var(--text);flex:1;}
+.grabar-fmt{font-size:10px;color:var(--text3);}
 
 /* LOADING */
 .loading{text-align:center;padding:60px 20px;color:var(--text3);font-size:13px;}
@@ -342,6 +354,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <button class="nav-item" onclick="showPage('calendar',this)">▦ &nbsp;Calendario</button>
     <button class="nav-item" onclick="showPage('weekly',this)">▤ &nbsp;Semana</button>
     <button class="nav-item" onclick="showPage('ideas',this)">◎ &nbsp;Banco de ideas</button>
+    <button class="nav-item" onclick="showPage('grabar',this)">▶ &nbsp;A grabar</button>
     <div class="nav-section">Análisis</div>
     <button class="nav-item" onclick="showPage('metrics',this)">◬ &nbsp;Métricas</button>
     <div class="nav-section">Marca</div>
@@ -440,6 +453,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="ideas-grid" id="ideas-grid"></div>
     </div>
 
+    <!-- A GRABAR ───────────────────────────────────────────── -->
+    <div class="page" id="page-grabar">
+      <div class="page-header">
+        <div><div class="page-title">A grabar</div><div class="page-sub">Todo lo que tenés pendiente de grabar, ordenado por fecha</div></div>
+      </div>
+      <div id="grabar-list" class="grabar-list"></div>
+    </div>
+
     <!-- METRICS ───────────────────────────────────────────── -->
     <div class="page" id="page-metrics">
       <div class="page-header">
@@ -460,77 +481,110 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <!-- BRAND MANUAL ──────────────────────────────────────── -->
     <div class="page" id="page-brand">
       <div class="page-header">
-        <div><div class="page-title">Manual de marca</div><div class="page-sub">Contexto estratégico completo</div></div>
+        <div><div class="page-title">Manual de marca</div><div class="page-sub">Editá cualquier campo — se guarda automáticamente</div></div>
+        <button class="btn" onclick="saveBrand()">Guardar cambios</button>
       </div>
 
       <div class="brand-section">
         <div class="brand-section-title">Identidad</div>
         <div class="card" style="margin-bottom:10px">
           <div class="b-label">Propósito</div>
-          <div class="brand-quote">"Demostrar que el cuerpo que querés no es un privilegio genético — es el resultado de decisiones, constancia y el acompañamiento correcto."</div>
+          <textarea class="brand-edit-field" id="b-proposito" rows="2">"Demostrar que el cuerpo que querés no es un privilegio genético — es el resultado de decisiones, constancia y el acompañamiento correcto."</textarea>
         </div>
         <div class="card" style="margin-bottom:10px">
           <div class="b-label">Misión</div>
-          <div class="brand-quote">"Acompañar a hombres jóvenes con responsabilidades a transformar su composición corporal y sus hábitos, para que recuperen la confianza en sí mismos y vivan con más energía, salud y plenitud."</div>
+          <textarea class="brand-edit-field" id="b-mision" rows="2">"Acompañar a hombres jóvenes con responsabilidades a transformar su composición corporal y sus hábitos, para que recuperen la confianza en sí mismos y vivan con más energía, salud y plenitud."</textarea>
         </div>
         <div class="card">
-          <div class="b-label">Mensaje central</div>
-          <div class="brand-quote">"El cuerpo que querés no es un privilegio genético — es el resultado de decisiones, constancia y el acompañamiento correcto."</div>
+          <div class="b-label">Mensaje central de marca</div>
+          <textarea class="brand-edit-field" id="b-mensaje" rows="2">"El cuerpo que querés no es un privilegio genético — es el resultado de decisiones, constancia y el acompañamiento correcto."</textarea>
         </div>
       </div>
 
       <div class="brand-section">
-        <div class="brand-section-title">Cliente ideal — "Martín"</div>
+        <div class="brand-section-title">Avatar — "Martín"</div>
         <div class="brand-grid-2">
           <div class="card">
-            <div class="b-label">Perfil</div>
-            <div class="b-val">Hombre 20–30 años. Trabaja en oficina o tiene emprendimiento. Ingresos medios estables. Vida activa con responsabilidades.</div>
+            <div class="b-label">Perfil demográfico</div>
+            <textarea class="brand-edit-field" id="b-perfil" rows="3">Hombre 20–30 años. Trabaja en oficina o tiene emprendimiento. Ingresos medios estables. Vida activa con responsabilidades.</textarea>
           </div>
           <div class="card">
-            <div class="b-label">Estado mental actual</div>
-            <div class="brand-quote" style="font-size:13px">"Sé que podría estar mejor. Lo intenté. Tengo información. Pero algo no está funcionando."</div>
+            <div class="b-label">Frase que lo define</div>
+            <textarea class="brand-edit-field" id="b-frase" rows="3">"Sé que podría estar mejor. Lo intenté. Tengo información. Pero algo no está funcionando."</textarea>
           </div>
           <div class="card">
             <div class="b-label">Deseos profundos</div>
-            <div class="b-val" style="font-size:12px;line-height:1.9">· Verse bien sin remera<br>· Sentirse con energía y rendir más<br>· Sentirse fuerte y competente<br>· Recuperar la confianza en sí mismo<br>· Tener salud sólida como base</div>
+            <textarea class="brand-edit-field" id="b-deseos" rows="5">· Verse bien sin remera — en la playa, en la pileta
+· Sentirse con energía y rendir mejor en el día a día
+· Sentirse fuerte y competente
+· Recuperar la confianza en sí mismo
+· Tener salud sólida como base de vida</textarea>
           </div>
           <div class="card">
-            <div class="b-label">Objeciones antes de contratar</div>
-            <div class="b-val" style="font-size:12px;line-height:1.9">· Miedo a pagar sin ver resultados<br>· Cree que IA y redes son suficientes<br>· Piensa que necesita más información<br>· Cree que un coach no es necesario</div>
+            <div class="b-label">Miedos y objeciones</div>
+            <textarea class="brand-edit-field" id="b-miedos" rows="5">· Miedo a pagar sin ver resultados
+· Cree que IA y redes son suficientes
+· Piensa que necesita más información primero
+· Cree que un coach no es necesario
+· Miedo a no tener tiempo suficiente</textarea>
+          </div>
+          <div class="card">
+            <div class="b-label">Palabras que usa para describir su problema</div>
+            <textarea class="brand-edit-field" id="b-palabras" rows="4">· "No tengo tiempo"
+· "Empiezo y no termino"
+· "Sé lo que tengo que hacer pero no lo hago"
+· "Ya probé de todo"</textarea>
+          </div>
+          <div class="card">
+            <div class="b-label">Con qué se compara / referencias</div>
+            <textarea class="brand-edit-field" id="b-referencias" rows="4">· Amigos que se ven bien sin esfuerzo aparente
+· Coaches en redes con cuerpos "perfectos"
+· Su versión anterior cuando estaba en mejor forma</textarea>
+          </div>
+          <div class="card">
+            <div class="b-label">Qué consume en redes</div>
+            <textarea class="brand-edit-field" id="b-consume" rows="4">· Contenido de fitness en Instagram y TikTok
+· Videos de motivación y productividad
+· Podcasts sobre hábitos y mentalidad
+· Usa IA para buscar rutinas y dietas</textarea>
+          </div>
+          <div class="card">
+            <div class="b-label">Resultado concreto que espera</div>
+            <textarea class="brand-edit-field" id="b-resultado" rows="4">· Bajar grasa visible en 2–3 meses
+· Ganar músculo sin perder su vida social
+· Sentirse con más energía en el trabajo
+· Poder sacarse la remera sin vergüenza</textarea>
+          </div>
+          <div class="card" style="grid-column:1/-1">
+            <div class="b-label">Barreras del día a día</div>
+            <textarea class="brand-edit-field" id="b-barreras" rows="3">· Jornadas largas de trabajo que lo agotan
+· Come fuera de casa o pide delivery seguido
+· No tiene horario fijo para entrenar
+· Viaja o tiene compromisos que interrumpen la rutina</textarea>
           </div>
         </div>
       </div>
 
       <div class="brand-section">
-        <div class="brand-section-title">Los 4 pilares de contenido</div>
-        <div class="pilares-grid">
-          <div class="pilar-card" style="border-color:rgba(93,202,165,0.2)">
-            <div class="pilar-card-title" style="color:var(--teal)">Educación — TOFU / MOFU</div>
-            <div class="pilar-card-desc">Posicionar como autoridad. Martín piensa: "este tipo sabe de lo que habla." Tips, desmitificación, método explicado de forma simple.</div>
-          </div>
-          <div class="pilar-card" style="border-color:rgba(168,159,245,0.2)">
-            <div class="pilar-card-title" style="color:var(--purple)">Conexión — TOFU / MOFU</div>
-            <div class="pilar-card-desc">Que Martín sienta: "este tipo me entiende." Historia personal, frustraciones reales nombradas en voz alta, reflexiones honestas.</div>
-          </div>
-          <div class="pilar-card" style="border-color:rgba(240,144,123,0.2)">
-            <div class="pilar-card-title" style="color:var(--coral)">Prueba social — MOFU / BOFU</div>
-            <div class="pilar-card-desc">Que Martín piense: "si él pudo, yo también puedo." Transformaciones reales con contexto, testimonios, resultados concretos.</div>
-          </div>
-          <div class="pilar-card" style="border-color:rgba(245,185,66,0.2)">
-            <div class="pilar-card-title" style="color:var(--amber)">Conversión — BOFU</div>
-            <div class="pilar-card-desc">Que Martín dé el paso. Cómo funciona el programa, para quién es, respuesta a objeciones, qué pasa en la llamada de diagnóstico.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="brand-section">
-        <div class="brand-section-title">Reglas de tono y estilo</div>
+        <div class="brand-section-title">Tono y estilo de comunicación</div>
         <div class="card">
           <div class="brand-grid-2">
-            <div><div class="b-label">Idioma</div><div class="b-val">Español rioplatense — "vos", "tenés", "podés", "acá"</div></div>
-            <div><div class="b-label">Tono</div><div class="b-val">Humano y cercano — nunca corporativo ni genérico</div></div>
-            <div style="margin-top:12px"><div class="b-label">Protagonista</div><div class="b-val">Siempre Martín, no el coach. Hablar de su situación.</div></div>
-            <div style="margin-top:12px"><div class="b-label">Regla de oro</div><div class="b-val">Una sola idea por pieza. Autenticidad sobre perfección.</div></div>
+            <div>
+              <div class="b-label">Idioma</div>
+              <textarea class="brand-edit-field" id="b-idioma" rows="2">Español rioplatense — "vos", "tenés", "podés", "acá"</textarea>
+            </div>
+            <div>
+              <div class="b-label">Tono</div>
+              <textarea class="brand-edit-field" id="b-tono" rows="2">Humano y cercano — nunca corporativo ni genérico. Auténtico sobre perfecto.</textarea>
+            </div>
+            <div style="margin-top:12px">
+              <div class="b-label">Protagonista del contenido</div>
+              <textarea class="brand-edit-field" id="b-protagonista" rows="2">Siempre Martín, no el coach. El contenido habla de su situación, sus deseos y sus problemas.</textarea>
+            </div>
+            <div style="margin-top:12px">
+              <div class="b-label">Regla de oro</div>
+              <textarea class="brand-edit-field" id="b-regla" rows="2">Una sola idea por pieza. Específico sobre general. Evitar frases vacías sin contexto concreto.</textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -539,12 +593,28 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         <div class="brand-section-title">Propuestas de valor</div>
         <div class="card" style="margin-bottom:10px">
           <div class="b-label">PUV Principal</div>
-          <div class="brand-quote" style="font-size:13px">"Ayudo a hombres de 20 a 30 años a transformar su composición corporal y recuperar su confianza mediante un sistema personalizado que combina entrenamiento concurrente, nutrición y hábitos — adaptado a su vida real, no al revés."</div>
+          <textarea class="brand-edit-field" id="b-puv1" rows="3">"Ayudo a hombres de 20 a 30 años a transformar su composición corporal y recuperar su confianza mediante un sistema personalizado que combina entrenamiento concurrente, nutrición y hábitos — adaptado a su vida real, no al revés."</textarea>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div class="b-label">PUV Emocional</div>
+          <textarea class="brand-edit-field" id="b-puv2" rows="3">"Acompaño a hombres jóvenes con vida ocupada a construir el físico del que siempre quisieron sentirse orgullosos — con un método que desarrolla fuerza, resistencia y composición corporal al mismo tiempo, sin sacrificar su vida en el proceso."</textarea>
         </div>
         <div class="card">
           <div class="b-label">PUV de Venta</div>
-          <div class="brand-quote" style="font-size:13px">"No necesitás más información — necesitás un sistema claro y un acompañamiento real."</div>
+          <textarea class="brand-edit-field" id="b-puv3" rows="2">"No necesitás más información — necesitás un sistema claro y un acompañamiento real."</textarea>
         </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="brand-section-title">Notas adicionales</div>
+        <div class="card">
+          <div class="b-label">Observaciones, cambios que notás en tu nicho, insights nuevos</div>
+          <textarea class="brand-edit-field" id="b-notas" rows="6" placeholder="Anotá acá cualquier cosa que observes sobre tu audiencia, cambios en el mercado, frases que escuchás repetidamente, patrones nuevos..."></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:40px">
+        <button class="btn" onclick="saveBrand()">Guardar todos los cambios</button>
       </div>
     </div>
 
@@ -569,7 +639,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="form-group">
         <label class="form-label">Formato</label>
         <select class="form-select" id="f-formato">
-          <option>Reel</option><option>Carrusel</option><option>Historia</option><option>Post estático</option><option>TikTok</option>
+          <option>Reel</option><option>Carrusel</option><option>Story</option><option>Historia</option><option>Post estático</option><option>TikTok</option>
         </select>
       </div>
     </div>
@@ -581,7 +651,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="form-group">
         <label class="form-label">Estado</label>
         <select class="form-select" id="f-estado">
-          <option value="idea">Idea</option><option value="en proceso">En proceso</option><option value="publicado">Publicado</option>
+          <option value="idea">Idea</option><option value="en proceso">En proceso</option><option value="grabar">Grabar</option><option value="publicado">Publicado</option>
         </select>
       </div>
     </div>
@@ -651,13 +721,75 @@ function todayStr() {
   return `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 }
 
+function estadoBadge(e) {
+  if (e==='publicado') return 'estado-publicado';
+  if (e==='en proceso') return 'estado-proceso';
+  if (e==='grabar') return 'estado-grabar';
+  return 'estado-idea';
+}
+
 function renderAll() {
   renderDashboard();
   renderCalendar();
   renderWeekly();
   renderIdeas();
+  renderGrabar();
   renderMetrics();
 }
+
+// ── A GRABAR ──────────────────────────────────────────────────
+function renderGrabar() {
+  const list = window.posts
+    .filter(p => p.estado === 'grabar')
+    .sort((a,b) => (a.fecha||'') > (b.fecha||'') ? 1 : -1);
+  const el = document.getElementById('grabar-list');
+  if (!el) return;
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty">No hay contenido marcado para grabar.<br>Cambiá el estado de un post a "Grabar" y aparece acá.</div>';
+    return;
+  }
+  el.innerHTML = list.map(p => {
+    const isStory = p.formato === 'Story';
+    return `<div class="grabar-row" onclick="openModal('${p.id}')">
+      <div class="grabar-date">${p.fecha || 'Sin fecha'}</div>
+      <span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span>
+      ${isStory ? '<span class="story-badge">STORY</span>' : ''}
+      <div class="grabar-title">${p.titulo}</div>
+      <div class="grabar-fmt">${p.formato||''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── BRAND EDITABLE ────────────────────────────────────────────
+const BRAND_FIELDS = ['proposito','mision','mensaje','perfil','frase','deseos','miedos','palabras','referencias','consume','resultado','barreras','idioma','tono','protagonista','regla','puv1','puv2','puv3','notas'];
+
+async function loadBrand() {
+  if (!currentUser) return;
+  try {
+    const ref = doc(db, 'users', currentUser.uid, 'brand', 'data');
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const data = snap.data();
+      BRAND_FIELDS.forEach(f => {
+        const el = document.getElementById('b-'+f);
+        if (el && data[f] !== undefined) el.value = data[f];
+      });
+    }
+  } catch(e) { console.log('Brand load:', e); }
+}
+
+window.saveBrand = async () => {
+  if (!currentUser) return;
+  const data = {};
+  BRAND_FIELDS.forEach(f => {
+    const el = document.getElementById('b-'+f);
+    if (el) data[f] = el.value;
+  });
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid, 'brand', 'data'), data);
+    showToast('Manual de marca guardado ✓');
+  } catch(e) { showToast('Error al guardar'); console.error(e); }
+};
 
 // ── NAV ───────────────────────────────────────────────────────
 function showPage(id, btn) {
@@ -830,7 +962,7 @@ function renderWeekly() {
         ${dp.map(p => `<div class="week-card" onclick="openModal('${p.id}')">
           <span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span>
           <div class="week-card-title">${p.titulo}</div>
-          <span class="badge ${p.estado==='publicado'?'estado-publicado':p.estado==='en proceso'?'estado-proceso':'estado-idea'}" style="font-size:9px">${p.estado}</span>
+          <span class="badge ${estadoBadge(p.estado)}" style="font-size:9px">${p.estado}</span>
         </div>`).join('')}
         <button class="week-add" onclick="openModal()">+ agregar</button>
       </div>
@@ -899,7 +1031,7 @@ function renderIdeas() {
     <div class="idea-card" onclick="openModal('${p.id}')">
       <div class="idea-meta">
         <span class="badge ${PILAR_CLASS[p.pilar]}">${p.pilar}</span>
-        <span class="badge ${p.estado==='publicado'?'estado-publicado':p.estado==='en proceso'?'estado-proceso':'estado-idea'}">${p.estado}</span>
+        <span class="badge ${estadoBadge(p.estado)}">${p.estado}</span>
       </div>
       <div class="idea-title">${p.titulo}</div>
       ${p.hook ? `<div class="idea-hook">"${p.hook.substring(0,75)}${p.hook.length>75?'…':''}"</div>` : ''}
