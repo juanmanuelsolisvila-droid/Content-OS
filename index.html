@@ -224,6 +224,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .cal-cell{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);min-height:76px;padding:7px;cursor:pointer;transition:border-color 0.12s;}
 .cal-cell:hover{border-color:var(--border2);}
 .cal-cell.empty{background:transparent;border-color:transparent;cursor:default;}
+.week-card[draggable]{cursor:grab;transition:opacity .15s,border-color .15s;}
+.week-card[draggable]:active{cursor:grabbing;}
+.cal-dot[draggable]{cursor:grab;}
+.week-posts.drag-over{background:var(--bg4)!important;}
 .cal-cell.today{border-color:rgba(200,240,110,0.3);}
 .cal-date{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;}
 .cal-cell.today .cal-date{color:var(--accent);}
@@ -917,6 +921,7 @@ function changeMonth(d) {
 function renderCalendar() {
   document.getElementById('cal-title').textContent = `${MESES[calMonth]} ${calYear}`;
   const dayNames = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const grid = document.getElementById('cal-grid');
   let html = dayNames.map(d => `<div class="cal-day-name">${d}</div>`).join('');
   const first = new Date(calYear, calMonth, 1);
   let startDay = first.getDay() - 1; if (startDay < 0) startDay = 6;
@@ -926,12 +931,63 @@ function renderCalendar() {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday = ds === todayStr();
     const dp = window.posts.filter(p => p.fecha === ds);
-    html += `<div class="cal-cell${isToday?' today':''}" onclick="openModal()">
+    html += `<div class="cal-cell${isToday?' today':''}"
+      data-date="${ds}"
+      ondragover="calDragOver(event)"
+      ondragleave="calDragLeave(event)"
+      ondrop="calDrop(event,'${ds}')"
+      onclick="calCellClick(event,'${ds}')">
       <div class="cal-date">${d}</div>
-      ${dp.map(p => `<span class="cal-dot badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px" onclick="event.stopPropagation();openModal('${p.id}')">${p.titulo.substring(0,18)}…</span>`).join('')}
+      ${dp.map(p => `<span
+        class="cal-dot badge ${PILAR_CLASS[p.pilar]}"
+        style="font-size:9px;cursor:grab"
+        draggable="true"
+        data-id="${p.id}"
+        ondragstart="calDragStart(event,'${p.id}')"
+        ondragend="calDragEnd(event)"
+        onclick="event.stopPropagation();openModal('${p.id}')"
+      >${p.titulo.substring(0,18)}…</span>`).join('')}
     </div>`;
   }
-  document.getElementById('cal-grid').innerHTML = html;
+  grid.innerHTML = html;
+}
+
+let calDraggingId = null;
+function calDragStart(e, id) {
+  calDraggingId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', id);
+  setTimeout(() => e.target.style.opacity = '0.4', 0);
+}
+function calDragEnd(e) {
+  e.target.style.opacity = '';
+  calDraggingId = null;
+}
+function calDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.style.background = 'var(--bg4)';
+  e.currentTarget.style.borderColor = 'var(--accent)';
+}
+function calDragLeave(e) {
+  e.currentTarget.style.background = '';
+  e.currentTarget.style.borderColor = '';
+}
+async function calDrop(e, newDate) {
+  e.preventDefault();
+  e.currentTarget.style.background = '';
+  e.currentTarget.style.borderColor = '';
+  const id = e.dataTransfer.getData('text/plain') || calDraggingId;
+  if (!id) return;
+  const post = window.posts.find(p => p.id === id);
+  if (!post || post.fecha === newDate) return;
+  try {
+    await window.savePostToDb({ ...post, fecha: newDate, updatedAt: new Date().toISOString() });
+    showToast('Fecha actualizada ✓');
+  } catch(err) { showToast('Error al mover'); }
+}
+function calCellClick(e, ds) {
+  if (e.target === e.currentTarget || e.target.classList.contains('cal-date')) openModal();
 }
 
 // ── WEEKLY ────────────────────────────────────────────────────
@@ -944,6 +1000,10 @@ function initWeekly() {
   weekStart.setHours(0,0,0,0);
 }
 function changeWeek(d) { weekStart.setDate(weekStart.getDate() + d*7); renderWeekly(); }
+
+let weekDraggingId = null;
+let weekDraggingDate = null;
+
 function renderWeekly() {
   const we = new Date(weekStart); we.setDate(weekStart.getDate()+6);
   document.getElementById('week-range').textContent = `${weekStart.getDate()} ${MESES[weekStart.getMonth()]} — ${we.getDate()} ${MESES[we.getMonth()]} ${we.getFullYear()}`;
@@ -952,14 +1012,28 @@ function renderWeekly() {
     const day = new Date(weekStart); day.setDate(weekStart.getDate()+i);
     const ds = `${day.getFullYear()}-${String(day.getMonth()+1).padStart(2,'0')}-${String(day.getDate()).padStart(2,'0')}`;
     const isToday = ds === todayStr();
-    const dp = window.posts.filter(p => p.fecha === ds);
+    const dp = window.posts.filter(p => p.fecha === ds).sort((a,b) => (a.orden||0)-(b.orden||0));
     html += `<div class="week-col${isToday?' today-col':''}">
       <div class="week-col-head">
         <div class="week-day-lbl">${DIAS[day.getDay()]}</div>
         <div class="week-day-num">${day.getDate()}</div>
       </div>
-      <div class="week-posts">
-        ${dp.map(p => `<div class="week-card" onclick="openModal('${p.id}')">
+      <div class="week-posts"
+        data-date="${ds}"
+        ondragover="weekDragOver(event)"
+        ondragleave="weekDragLeave(event)"
+        ondrop="weekDrop(event,'${ds}')">
+        ${dp.map(p => `<div
+          class="week-card"
+          draggable="true"
+          data-id="${p.id}"
+          data-date="${ds}"
+          ondragstart="weekDragStart(event,'${p.id}','${ds}')"
+          ondragend="weekDragEnd(event)"
+          ondragover="weekCardDragOver(event)"
+          ondrop="weekCardDrop(event,'${p.id}','${ds}')"
+          onclick="openModal('${p.id}')"
+          style="cursor:grab">
           <span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span>
           <div class="week-card-title">${p.titulo}</div>
           <span class="badge ${estadoBadge(p.estado)}" style="font-size:9px">${p.estado}</span>
@@ -969,6 +1043,80 @@ function renderWeekly() {
     </div>`;
   }
   document.getElementById('week-grid').innerHTML = html;
+}
+
+function weekDragStart(e, id, date) {
+  weekDraggingId = id;
+  weekDraggingDate = date;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', id);
+  setTimeout(() => e.currentTarget.style.opacity = '0.4', 0);
+}
+function weekDragEnd(e) {
+  e.currentTarget.style.opacity = '';
+  weekDraggingId = null;
+  weekDraggingDate = null;
+  document.querySelectorAll('.week-posts').forEach(el => {
+    el.style.background = '';
+    el.style.borderColor = '';
+  });
+  document.querySelectorAll('.week-card').forEach(el => el.style.borderTop = '');
+}
+function weekDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.style.background = 'var(--bg4)';
+}
+function weekDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.style.background = '';
+  }
+}
+function weekCardDragOver(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.style.borderTop = '2px solid var(--accent)';
+}
+async function weekCardDrop(e, targetId, targetDate) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.style.borderTop = '';
+  document.querySelectorAll('.week-posts').forEach(el => el.style.background = '');
+  const srcId = weekDraggingId || e.dataTransfer.getData('text/plain');
+  if (!srcId || srcId === targetId) return;
+  const srcPost = window.posts.find(p => p.id === srcId);
+  const tgtPost = window.posts.find(p => p.id === targetId);
+  if (!srcPost || !tgtPost) return;
+  try {
+    const updates = [];
+    if (srcPost.fecha !== targetDate) {
+      updates.push(window.savePostToDb({ ...srcPost, fecha: targetDate, orden: (tgtPost.orden||0) - 0.5, updatedAt: new Date().toISOString() }));
+    } else {
+      // reorder within same day
+      const dayPosts = window.posts.filter(p => p.fecha === targetDate).sort((a,b)=>(a.orden||0)-(b.orden||0));
+      const reordered = dayPosts.filter(p => p.id !== srcId);
+      const tgtIdx = reordered.findIndex(p => p.id === targetId);
+      reordered.splice(tgtIdx, 0, srcPost);
+      reordered.forEach((p, idx) => {
+        updates.push(window.savePostToDb({ ...p, orden: idx, updatedAt: new Date().toISOString() }));
+      });
+    }
+    await Promise.all(updates);
+    showToast('Orden actualizado ✓');
+  } catch(err) { showToast('Error al mover'); }
+}
+async function weekDrop(e, newDate) {
+  e.preventDefault();
+  e.currentTarget.style.background = '';
+  const id = weekDraggingId || e.dataTransfer.getData('text/plain');
+  if (!id) return;
+  const post = window.posts.find(p => p.id === id);
+  if (!post || post.fecha === newDate) return;
+  const dayPosts = window.posts.filter(p => p.fecha === newDate);
+  try {
+    await window.savePostToDb({ ...post, fecha: newDate, orden: dayPosts.length, updatedAt: new Date().toISOString() });
+    showToast('Movido ✓');
+  } catch(err) { showToast('Error al mover'); }
 }
 
 // ── IDEAS ─────────────────────────────────────────────────────
