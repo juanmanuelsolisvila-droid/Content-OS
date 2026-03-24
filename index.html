@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content OS — Coaching Fitness</title>
+<title>Content OS — Coach Juanma Solís</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e0e0c'/%3E%3Crect x='6' y='8' width='14' height='2.5' rx='1.25' fill='%23c8f06e'/%3E%3Crect x='6' y='13' width='20' height='2.5' rx='1.25' fill='%23c8f06e' opacity='.6'/%3E%3Crect x='6' y='18' width='11' height='2.5' rx='1.25' fill='%23c8f06e' opacity='.35'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%23c8f06e'/%3E%3Cpath d='M21.5 22l1.8 1.8 3.2-3.2' stroke='%230e0e0c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
 
 <!-- ============================================================
   FIREBASE CONFIG — REEMPLAZÁ ESTOS VALORES CON LOS TUYOS
@@ -74,13 +75,13 @@ function postsRef() {
 }
 
 const SEED_POSTS = [
-  { id: 's1', titulo: 'Qué es el entrenamiento concurrente y por qué funciona para vos', pilar: 'Educación', formato: 'Carrusel', fecha: '2025-03-24', estado: 'Idea', hook: 'La mayoría entrena fuerza O cardio. Los que mejor se ven hacen las dos cosas a la vez.', notas: 'Explicar qué es el entrenamiento concurrente en lenguaje simple. Desmitificar que necesitás hacer cardio por separado.', metrics: null, updatedAt: new Date().toISOString() },
-  { id: 's2', titulo: 'La primera vez que sentí que mi cuerpo podía cambiar', pilar: 'Conexión', formato: 'Reel', fecha: '2025-03-25', estado: 'Idea', hook: 'Con 17 años me fui al gimnasio con mi amigo Facundo. Sin plan, sin idea. Pero algo cambió ahí.', notas: 'Historia personal. El primer cambio físico. Cómo cambió la identidad, no solo el cuerpo. Tono íntimo, directo a cámara.', metrics: null, updatedAt: new Date().toISOString() },
-  { id: 's3', titulo: 'El método del plato: cómo comer mejor sin dieta ni app', pilar: 'Educación', formato: 'Reel', fecha: '2025-03-26', estado: 'Idea', hook: 'No necesitás pesar la comida ni contar calorías. Solo esto.', notas: 'Explicar el método del plato de forma visual y simple. Una idea, sin complicar.', metrics: null, updatedAt: new Date().toISOString() },
-  { id: 's4', titulo: 'La transformación que no se ve en la foto', pilar: 'Prueba social', formato: 'Reel', fecha: '2025-03-27', estado: 'Idea', hook: 'Este resultado no se mide en kilos. Se mide en cómo se para frente al espejo.', notas: 'Usar fotos del cliente. El foco va en la historia detrás — qué cambió en su vida, su energía, su confianza. No solo el físico.', metrics: null, updatedAt: new Date().toISOString() },
-  { id: 's5', titulo: 'Seguís a 10 coaches, usás la IA, y algo todavía no cierra', pilar: 'Conexión', formato: 'Reel', fecha: '2025-03-28', estado: 'Idea', hook: 'Tenés toda la información. Y algo todavía no está funcionando. Por qué.', notas: 'Nombrar en voz alta la frustración de Martín. Tener info pero no ver resultados. Tono honesto, sin vender todavía.', metrics: null, updatedAt: new Date().toISOString() },
-  { id: 's6', titulo: 'Así funciona el programa: qué pasa desde el día 1', pilar: 'Conversión', formato: 'Carrusel', fecha: '2025-03-29', estado: 'Idea', hook: 'No es solo un plan de entrenamiento. Te cuento exactamente qué pasa cuando arrancamos.', notas: 'Slide por slide: diagnóstico, llamada inicial, plan personalizado, seguimiento diario, ajustes semanales, check-in mensual. Sin vender agresivo.', metrics: null, updatedAt: new Date().toISOString() },
-  { id: 's7', titulo: 'La motivación te arranca. La constancia te transforma.', pilar: 'Educación', formato: 'Reel', fecha: '2025-03-30', estado: 'Idea', hook: 'Esperás tener ganas para entrenar. Ese es el error.', notas: 'Reel corto, 30 segundos. Un concepto simple dicho directo. El domingo Martín piensa en la semana que viene.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's1', titulo: 'Qué es el entrenamiento concurrente y por qué funciona para vos', pilar: 'Educación', formato: 'Carrusel', fecha: '2025-03-24', estado: 'idea', hook: 'La mayoría entrena fuerza O cardio. Los que mejor se ven hacen las dos cosas a la vez.', notas: 'Explicar qué es el entrenamiento concurrente en lenguaje simple. Desmitificar que necesitás hacer cardio por separado.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's2', titulo: 'La primera vez que sentí que mi cuerpo podía cambiar', pilar: 'Conexión', formato: 'Reel', fecha: '2025-03-25', estado: 'idea', hook: 'Con 17 años me fui al gimnasio con mi amigo Facundo. Sin plan, sin idea. Pero algo cambió ahí.', notas: 'Historia personal. El primer cambio físico. Cómo cambió la identidad, no solo el cuerpo. Tono íntimo, directo a cámara.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's3', titulo: 'El método del plato: cómo comer mejor sin dieta ni app', pilar: 'Educación', formato: 'Reel', fecha: '2025-03-26', estado: 'idea', hook: 'No necesitás pesar la comida ni contar calorías. Solo esto.', notas: 'Explicar el método del plato de forma visual y simple. Una idea, sin complicar.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's4', titulo: 'La transformación que no se ve en la foto', pilar: 'Prueba social', formato: 'Reel', fecha: '2025-03-27', estado: 'idea', hook: 'Este resultado no se mide en kilos. Se mide en cómo se para frente al espejo.', notas: 'Usar fotos del cliente. El foco va en la historia detrás — qué cambió en su vida, su energía, su confianza. No solo el físico.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's5', titulo: 'Seguís a 10 coaches, usás la IA, y algo todavía no cierra', pilar: 'Conexión', formato: 'Reel', fecha: '2025-03-28', estado: 'idea', hook: 'Tenés toda la información. Y algo todavía no está funcionando. Por qué.', notas: 'Nombrar en voz alta la frustración de Martín. Tener info pero no ver resultados. Tono honesto, sin vender todavía.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's6', titulo: 'Así funciona el programa: qué pasa desde el día 1', pilar: 'Conversión', formato: 'Carrusel', fecha: '2025-03-29', estado: 'idea', hook: 'No es solo un plan de entrenamiento. Te cuento exactamente qué pasa cuando arrancamos.', notas: 'Slide por slide: diagnóstico, llamada inicial, plan personalizado, seguimiento diario, ajustes semanales, check-in mensual. Sin vender agresivo.', metrics: null, updatedAt: new Date().toISOString() },
+  { id: 's7', titulo: 'La motivación te arranca. La constancia te transforma.', pilar: 'Educación', formato: 'Reel', fecha: '2025-03-30', estado: 'idea', hook: 'Esperás tener ganas para entrenar. Ese es el error.', notas: 'Reel corto, 30 segundos. Un concepto simple dicho directo. El domingo Martín piensa en la semana que viene.', metrics: null, updatedAt: new Date().toISOString() },
 ];
 
 async function seedIfEmpty(snap) {
@@ -223,11 +224,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .cal-cell:hover{border-color:var(--border2);}
 .cal-cell.empty{background:transparent;border-color:transparent;cursor:default;}
 .cal-cell.today{border-color:rgba(200,240,110,0.3);}
-.cal-cell.drag-over{border-color:rgba(200,240,110,0.65);background:rgba(200,240,110,0.05);}
 .cal-date{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;}
 .cal-cell.today .cal-date{color:var(--accent);}
 .cal-dot{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
-.cal-dot.is-dragging{opacity:0.65;}
 
 /* WEEKLY */
 .week-nav-row{display:flex;align-items:center;gap:10px;}
@@ -256,13 +255,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .idea-hook{font-size:11px;color:var(--text3);font-style:italic;line-height:1.4;}
 .idea-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
 .idea-fmt{font-size:10px;color:var(--text3);}
-
-/* NEW: auto idea generator highlight */
-.idea-card.auto-idea-highlight{
-  border-color:rgba(200,240,110,0.85);
-  box-shadow:0 0 0 2px rgba(200,240,110,0.14);
-  transition:box-shadow 0.2s,border-color 0.2s;
-}
 
 /* METRICS */
 .metrics-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px;}
@@ -323,7 +315,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">Content OS</div>
-    <div class="login-sub">Coaching Fitness Online</div>
+    <div class="login-sub">Coach Juanma Solís</div>
     <button class="login-btn" onclick="loginWithGoogle()">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
       Continuar con Google
@@ -343,14 +335,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
   <div class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-brand">Content OS</div>
-      <div class="sidebar-sub">Coaching Fitness</div>
+      <div class="sidebar-sub">Coach Juanma Solís</div>
     </div>
     <div class="nav-section">Planificación</div>
     <button class="nav-item active" onclick="showPage('dashboard',this)">◈ &nbsp;Dashboard</button>
     <button class="nav-item" onclick="showPage('calendar',this)">▦ &nbsp;Calendario</button>
     <button class="nav-item" onclick="showPage('weekly',this)">▤ &nbsp;Semana</button>
     <button class="nav-item" onclick="showPage('ideas',this)">◎ &nbsp;Banco de ideas</button>
-    <button class="nav-item" onclick="showPage('templates',this)">▣ &nbsp;Plantillas</button>
     <div class="nav-section">Análisis</div>
     <button class="nav-item" onclick="showPage('metrics',this)">◬ &nbsp;Métricas</button>
     <div class="nav-section">Marca</div>
@@ -420,67 +411,33 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <!-- IDEAS ─────────────────────────────────────────────── -->
     <div class="page" id="page-ideas">
       <div class="page-header">
-        <div><div class="page-title">Banco de ideas</div><div class="page-sub">Todo tu contenido</div></div>
+        <div><div class="page-title">Banco de ideas</div><div class="page-sub" id="ideas-sub">Ideas y contenido en proceso</div></div>
         <button class="btn" onclick="openModal()">+ Nueva idea</button>
       </div>
-      <!-- NEW: auto idea generator -->
-      <div class="card" style="margin-bottom:18px">
-        <div class="b-label" style="margin-bottom:10px">Generar idea automáticamente</div>
-        <div class="form-group" style="margin-bottom:12px">
-          <textarea class="form-textarea" id="gen-idea-input" placeholder="Escribí una idea, tema o pensamiento..."></textarea>
-        </div>
-        <div class="modal-actions" style="justify-content:flex-end;margin-top:6px">
-          <button class="btn" onclick="generateIdeaAuto()">Generar idea</button>
-        </div>
+      <!-- TABS -->
+      <div style="display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border);">
+        <button id="tab-activos" onclick="switchIdeasTab('activos')" style="background:none;border:none;border-bottom:2px solid var(--accent);padding:8px 20px;font-size:13px;font-weight:500;color:var(--accent);cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:-1px;">En curso</button>
+        <button id="tab-publicados" onclick="switchIdeasTab('publicados')" style="background:none;border:none;border-bottom:2px solid transparent;padding:8px 20px;font-size:13px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:-1px;transition:color .15s;">Publicados</button>
       </div>
-      <div class="filters">
-        <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
-        <button class="filter-btn" style="color:var(--teal)" onclick="setFilter('Educación',this)">Educación</button>
-        <button class="filter-btn" style="color:var(--purple)" onclick="setFilter('Conexión',this)">Conexión</button>
-        <button class="filter-btn" style="color:var(--coral)" onclick="setFilter('Prueba social',this)">Prueba social</button>
-        <button class="filter-btn" style="color:var(--amber)" onclick="setFilter('Conversión',this)">Conversión</button>
-        <button class="filter-btn" onclick="setFilter('Idea',this)">Ideas</button>
-        <button class="filter-btn" onclick="setFilter('Grabar',this)">Grabar</button>
-        <button class="filter-btn" onclick="setFilter('Editar',this)">Editar</button>
-        <button class="filter-btn" onclick="setFilter('Publicado',this)">Publicados</button>
+      <!-- FILTROS — EN CURSO -->
+      <div id="filters-activos" class="filters">
+        <button class="filter-btn active" onclick="setFilter('active_all',this)">Todos</button>
+        <button class="filter-btn" style="color:var(--teal)" onclick="setFilter('active_Educación',this)">Educación</button>
+        <button class="filter-btn" style="color:var(--purple)" onclick="setFilter('active_Conexión',this)">Conexión</button>
+        <button class="filter-btn" style="color:var(--coral)" onclick="setFilter('active_Prueba social',this)">Prueba social</button>
+        <button class="filter-btn" style="color:var(--amber)" onclick="setFilter('active_Conversión',this)">Conversión</button>
+        <button class="filter-btn" onclick="setFilter('active_idea',this)">Idea</button>
+        <button class="filter-btn" onclick="setFilter('active_en proceso',this)">En proceso</button>
+      </div>
+      <!-- FILTROS — PUBLICADOS -->
+      <div id="filters-publicados" class="filters" style="display:none">
+        <button class="filter-btn active" onclick="setFilter('pub_all',this)">Todos</button>
+        <button class="filter-btn" style="color:var(--teal)" onclick="setFilter('pub_Educación',this)">Educación</button>
+        <button class="filter-btn" style="color:var(--purple)" onclick="setFilter('pub_Conexión',this)">Conexión</button>
+        <button class="filter-btn" style="color:var(--coral)" onclick="setFilter('pub_Prueba social',this)">Prueba social</button>
+        <button class="filter-btn" style="color:var(--amber)" onclick="setFilter('pub_Conversión',this)">Conversión</button>
       </div>
       <div class="ideas-grid" id="ideas-grid"></div>
-    </div>
-
-    <!-- TEMPLATES ───────────────────────────────────────────── -->
-    <div class="page" id="page-templates">
-      <div class="page-header">
-        <div><div class="page-title">Plantillas</div><div class="page-sub">Reutilizá hooks y estructuras</div></div>
-      </div>
-      <div class="two-col">
-        <div class="card">
-          <div class="b-label" style="margin-bottom:12px">Nueva plantilla</div>
-          <div class="form-group">
-            <label class="form-label">Nombre de la plantilla</label>
-            <input class="form-input" id="tpl-name" placeholder="Ej: Hook - Problema - Método - Resultado">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Hook</label>
-            <input class="form-input" id="tpl-hook" placeholder="La primera línea que para el scroll...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Estructura (desarrollo)</label>
-            <textarea class="form-textarea" id="tpl-body" placeholder="Desarrollá el guión base / estructura reusable..."></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">CTA</label>
-            <input class="form-input" id="tpl-cta" placeholder="Ej: Escribime 'PLAN' por DM para empezar">
-          </div>
-          <div class="modal-actions" style="justify-content:flex-end;margin-top:14px">
-            <button class="btn" onclick="saveTemplate()">Guardar como plantilla</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="b-label" style="margin-bottom:12px">Tus plantillas guardadas</div>
-          <div id="tpl-list" style="display:flex;flex-direction:column;gap:10px"></div>
-        </div>
-      </div>
     </div>
 
     <!-- METRICS ───────────────────────────────────────────── -->
@@ -624,27 +581,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="form-group">
         <label class="form-label">Estado</label>
         <select class="form-select" id="f-estado">
-          <option value="Idea">Idea</option><option value="Grabar">Grabar</option><option value="Editar">Editar</option><option value="Publicado">Publicado</option>
+          <option value="idea">Idea</option><option value="en proceso">En proceso</option><option value="publicado">Publicado</option>
         </select>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Seleccionar plantilla</label>
-      <select class="form-select" id="f-plantilla">
-        <option value="">Sin plantilla</option>
-      </select>
     </div>
     <div class="form-group">
       <label class="form-label">Hook (primera línea que para el scroll)</label>
       <input class="form-input" id="f-hook" placeholder="La frase que detiene el scroll...">
     </div>
     <div class="form-group">
-      <label class="form-label">Estructura (desarrollo)</label>
+      <label class="form-label">Guión / copy / notas</label>
       <textarea class="form-textarea" id="f-notas" placeholder="Escribí el guión, el caption, ideas sueltas..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">CTA</label>
-      <input class="form-input" id="f-cta" placeholder="Ej: Reservá tu lugar...">
     </div>
     <div class="modal-actions">
       <button class="delete-btn" id="delete-btn" onclick="deleteCurrentPost()" style="display:none">Eliminar</button>
@@ -682,7 +629,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 window.posts = [];
 let editingId = null;
 let metPostId = null;
-let activeFilter = 'all';
+let activeFilter = 'active_all';
 let calYear, calMonth;
 let weekStart;
 const today = new Date();
@@ -691,25 +638,6 @@ const PILAR_CLASS = {'Educación':'pilar-edu','Conexión':'pilar-con','Prueba so
 const PILAR_COLOR = {'Educación':'#5dcaa5','Conexión':'#a89ff5','Prueba social':'#f0907b','Conversión':'#f5b942'};
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-const ESTADOS_VALIDOS = ['Idea','Grabar','Editar','Publicado'];
-
-// NEW: content status normalization (compat con datos existentes)
-function normalizeEstado(estado) {
-  if (estado === undefined || estado === null) return 'Idea';
-  const s = String(estado).trim();
-  if (ESTADOS_VALIDOS.includes(s)) return s;
-  const lower = s.toLowerCase();
-  if (lower === 'idea') return 'Idea';
-  if (lower === 'en proceso' || lower === 'enproceso') return 'Editar';
-  if (lower === 'grabar') return 'Grabar';
-  if (lower === 'editar') return 'Editar';
-  if (lower === 'publicado' || lower === 'publicados') return 'Publicado';
-  return 'Idea'; // fallback seguro
-}
-
-// NEW: templates system state (localStorage)
-const TEMPLATE_STORAGE_KEY = 'content_os_templates_v1';
-let templates = [];
 
 // ── HELPERS ───────────────────────────────────────────────────
 function showToast(msg) {
@@ -744,8 +672,6 @@ function openModal(postId) {
   editingId = postId || null;
   document.getElementById('modal-title').textContent = postId ? 'Editar contenido' : 'Nuevo contenido';
   document.getElementById('delete-btn').style.display = postId ? 'block' : 'none';
-  // NEW: templates system - reset selection for predictable editing/creation
-  document.getElementById('f-plantilla').value = '';
   if (postId) {
     const p = window.posts.find(x => x.id === postId);
     if (p) {
@@ -753,20 +679,18 @@ function openModal(postId) {
       document.getElementById('f-pilar').value = p.pilar || 'Educación';
       document.getElementById('f-formato').value = p.formato || 'Reel';
       document.getElementById('f-fecha').value = p.fecha || '';
-      document.getElementById('f-estado').value = normalizeEstado(p.estado);
+      document.getElementById('f-estado').value = p.estado || 'idea';
       document.getElementById('f-hook').value = p.hook || '';
       document.getElementById('f-notas').value = p.notas || '';
-      document.getElementById('f-cta').value = p.cta || '';
     }
   } else {
     document.getElementById('f-titulo').value = '';
     document.getElementById('f-pilar').value = 'Educación';
     document.getElementById('f-formato').value = 'Reel';
     document.getElementById('f-fecha').value = todayStr();
-    document.getElementById('f-estado').value = 'Idea';
+    document.getElementById('f-estado').value = 'idea';
     document.getElementById('f-hook').value = '';
     document.getElementById('f-notas').value = '';
-    document.getElementById('f-cta').value = '';
   }
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -783,12 +707,9 @@ async function savePost() {
     pilar: document.getElementById('f-pilar').value,
     formato: document.getElementById('f-formato').value,
     fecha: document.getElementById('f-fecha').value,
-    // NEW: content status update (compat: siempre guardamos el nuevo formato)
-    estado: normalizeEstado(document.getElementById('f-estado').value),
+    estado: document.getElementById('f-estado').value,
     hook: document.getElementById('f-hook').value,
     notas: document.getElementById('f-notas').value,
-    // NEW: CTA soportado (se completa desde templates o manualmente)
-    cta: document.getElementById('f-cta').value,
     metrics: editingId ? (window.posts.find(p => p.id === editingId)?.metrics || null) : null,
     updatedAt: new Date().toISOString()
   };
@@ -821,9 +742,9 @@ function renderDashboard() {
   const ym = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
   const thisMonth = window.posts.filter(p => p.fecha && p.fecha.startsWith(ym));
   document.getElementById('m-total').textContent = thisMonth.length;
-  document.getElementById('m-pub').textContent = thisMonth.filter(p => normalizeEstado(p.estado)==='Publicado').length;
-  document.getElementById('m-proc').textContent = thisMonth.filter(p => ['Grabar','Editar'].includes(normalizeEstado(p.estado))).length;
-  document.getElementById('m-idea').textContent = window.posts.filter(p => normalizeEstado(p.estado)==='Idea').length;
+  document.getElementById('m-pub').textContent = thisMonth.filter(p => p.estado==='publicado').length;
+  document.getElementById('m-proc').textContent = thisMonth.filter(p => p.estado==='en proceso').length;
+  document.getElementById('m-idea').textContent = window.posts.filter(p => p.estado==='idea').length;
 
   const counts = {'Educación':0,'Conexión':0,'Prueba social':0,'Conversión':0};
   window.posts.forEach(p => { if(counts[p.pilar]!==undefined) counts[p.pilar]++; });
@@ -873,68 +794,12 @@ function renderCalendar() {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday = ds === todayStr();
     const dp = window.posts.filter(p => p.fecha === ds);
-    html += `<div class="cal-cell${isToday?' today':''}" data-cal-date="${ds}" ondragover="calendarDayDragOver(event)" ondragleave="calendarDayDragLeave(event)" ondrop="calendarDayDrop(event)" onclick="calendarDayClicked()">
+    html += `<div class="cal-cell${isToday?' today':''}" onclick="openModal()">
       <div class="cal-date">${d}</div>
-      ${dp.map(p => `<span class="cal-dot badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px" draggable="true" data-post-id="${p.id}" ondragstart="calendarItemDragStart(event)" ondragend="calendarItemDragEnd(event)" onclick="event.stopPropagation();openModal('${p.id}')">${p.titulo.substring(0,18)}…</span>`).join('')}
+      ${dp.map(p => `<span class="cal-dot badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px" onclick="event.stopPropagation();openModal('${p.id}')">${p.titulo.substring(0,18)}…</span>`).join('')}
     </div>`;
   }
   document.getElementById('cal-grid').innerHTML = html;
-}
-
-// NEW: drag and drop (calendar)
-function calendarItemDragStart(e) {
-  const postId = e.currentTarget.dataset.postId;
-  if (!postId) return;
-  // Store content ID during drag
-  e.dataTransfer.setData('text/plain', postId);
-  e.dataTransfer.effectAllowed = 'move';
-  e.currentTarget.classList.add('is-dragging');
-}
-function calendarItemDragEnd(e) {
-  e.currentTarget.classList.remove('is-dragging');
-}
-function calendarDayDragOver(e) {
-  e.preventDefault(); // allow drop
-  e.dataTransfer.dropEffect = 'move';
-  e.currentTarget.classList.add('drag-over');
-}
-function calendarDayDragLeave(e) {
-  e.currentTarget.classList.remove('drag-over');
-}
-async function calendarDayDrop(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  window.__calendarDropTs = Date.now();
-  const ds = e.currentTarget.dataset.calDate;
-  const postId = e.dataTransfer.getData('text/plain');
-  e.currentTarget.classList.remove('drag-over');
-
-  if (!postId || !ds) return;
-  const p = window.posts.find(x => x.id === postId);
-  if (!p) return;
-  if (p.fecha === ds) return;
-
-  // NEW: update assigned date and re-render calendar
-  const prevFecha = p.fecha;
-  const updated = { ...p, fecha: ds, updatedAt: new Date().toISOString() };
-  window.posts = window.posts.map(x => x.id === postId ? updated : x);
-  renderCalendar();
-
-  try {
-    await window.savePostToDb(updated);
-    showToast('Fecha actualizada ✓');
-  } catch (err) {
-    window.posts = window.posts.map(x => x.id === postId ? { ...x, fecha: prevFecha, updatedAt: new Date().toISOString() } : x);
-    renderCalendar();
-    showToast('Error al actualizar fecha');
-    console.error(err);
-  }
-}
-
-// NEW: guard to prevent openModal on immediate click after drop
-function calendarDayClicked() {
-  if (window.__calendarDropTs && (Date.now() - window.__calendarDropTs) < 700) return;
-  openModal();
 }
 
 // ── WEEKLY ────────────────────────────────────────────────────
@@ -965,7 +830,7 @@ function renderWeekly() {
         ${dp.map(p => `<div class="week-card" onclick="openModal('${p.id}')">
           <span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span>
           <div class="week-card-title">${p.titulo}</div>
-          <span class="badge ${(() => { const est = normalizeEstado(p.estado); return est==='Publicado'?'estado-publicado':(est==='Idea'?'estado-idea':'estado-proceso'); })()}" style="font-size:9px">${normalizeEstado(p.estado)}</span>
+          <span class="badge ${p.estado==='publicado'?'estado-publicado':p.estado==='en proceso'?'estado-proceso':'estado-idea'}" style="font-size:9px">${p.estado}</span>
         </div>`).join('')}
         <button class="week-add" onclick="openModal()">+ agregar</button>
       </div>
@@ -975,26 +840,66 @@ function renderWeekly() {
 }
 
 // ── IDEAS ─────────────────────────────────────────────────────
+let ideasTab = 'activos'; // 'activos' | 'publicados'
+
+function switchIdeasTab(tab) {
+  ideasTab = tab;
+  // Tab styles
+  const tA = document.getElementById('tab-activos');
+  const tP = document.getElementById('tab-publicados');
+  if (tab === 'activos') {
+    tA.style.borderBottomColor = 'var(--accent)'; tA.style.color = 'var(--accent)';
+    tP.style.borderBottomColor = 'transparent'; tP.style.color = 'var(--text2)';
+    document.getElementById('filters-activos').style.display = 'flex';
+    document.getElementById('filters-publicados').style.display = 'none';
+    document.getElementById('ideas-sub').textContent = 'Ideas y contenido en proceso';
+    activeFilter = 'active_all';
+    document.querySelectorAll('#filters-activos .filter-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  } else {
+    tP.style.borderBottomColor = 'var(--accent)'; tP.style.color = 'var(--accent)';
+    tA.style.borderBottomColor = 'transparent'; tA.style.color = 'var(--text2)';
+    document.getElementById('filters-activos').style.display = 'none';
+    document.getElementById('filters-publicados').style.display = 'flex';
+    document.getElementById('ideas-sub').textContent = 'Historial de contenido publicado';
+    activeFilter = 'pub_all';
+    document.querySelectorAll('#filters-publicados .filter-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  }
+  renderIdeas();
+}
+
 function setFilter(f, btn) {
   activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const container = f.startsWith('pub_') ? '#filters-publicados' : '#filters-activos';
+  document.querySelectorAll(container + ' .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderIdeas();
 }
+
 function renderIdeas() {
   let list = window.posts;
-  if (activeFilter === 'all') {}
-  else if (['Idea','Grabar','Editar','Publicado'].includes(activeFilter)) list = list.filter(p => normalizeEstado(p.estado) === activeFilter);
-  else list = list.filter(p => p.pilar === activeFilter);
+  if (ideasTab === 'activos') {
+    list = list.filter(p => p.estado !== 'publicado');
+    if (activeFilter === 'active_idea') list = list.filter(p => p.estado === 'idea');
+    else if (activeFilter === 'active_en proceso') list = list.filter(p => p.estado === 'en proceso');
+    else if (activeFilter && activeFilter.startsWith('active_') && !['active_all','active_idea','active_en proceso'].includes(activeFilter)) {
+      list = list.filter(p => p.pilar === activeFilter.replace('active_',''));
+    }
+  } else {
+    list = list.filter(p => p.estado === 'publicado');
+    if (activeFilter && activeFilter.startsWith('pub_') && activeFilter !== 'pub_all') {
+      list = list.filter(p => p.pilar === activeFilter.replace('pub_',''));
+    }
+  }
   const g = document.getElementById('ideas-grid');
-  if (list.length === 0) { g.innerHTML = `<div class="empty" style="grid-column:1/-1">Sin contenido acá todavía.<br>Usá "+ Nueva idea" para agregar.</div>`; return; }
+  if (list.length === 0) {
+    g.innerHTML = `<div class="empty" style="grid-column:1/-1">${ideasTab === 'publicados' ? 'Todavía no publicaste ningún post.<br>Cuando cambies el estado a "publicado" aparecen acá.' : 'Sin ideas acá todavía.<br>Usá "+ Nueva idea" para agregar.'}</div>`;
+    return;
+  }
   g.innerHTML = list.map(p => `
-    <div class="idea-card" data-post-id="${p.id}" onclick="openModal('${p.id}')">
+    <div class="idea-card" onclick="openModal('${p.id}')">
       <div class="idea-meta">
         <span class="badge ${PILAR_CLASS[p.pilar]}">${p.pilar}</span>
-        <span class="badge ${(() => { const est = normalizeEstado(p.estado); return est==='Publicado'?'estado-publicado':(est==='Idea'?'estado-idea':'estado-proceso'); })()}">${normalizeEstado(p.estado)}</span>
-        <!-- NEW: duplicate idea -->
-        <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;margin-left:auto" onclick="event.stopPropagation();duplicateIdea('${p.id}')">Duplicar</button>
+        <span class="badge ${p.estado==='publicado'?'estado-publicado':p.estado==='en proceso'?'estado-proceso':'estado-idea'}">${p.estado}</span>
       </div>
       <div class="idea-title">${p.titulo}</div>
       ${p.hook ? `<div class="idea-hook">"${p.hook.substring(0,75)}${p.hook.length>75?'…':''}"</div>` : ''}
@@ -1005,168 +910,9 @@ function renderIdeas() {
     </div>`).join('');
 }
 
-// NEW: duplicate idea (Banco de ideas)
-async function duplicateIdea(postId) {
-  const original = window.posts.find(p => p.id === postId);
-  if (!original) return;
-
-  const copy = {
-    ...original,
-    id: Date.now().toString() + '_' + Math.random().toString(16).slice(2),
-    titulo: `${original.titulo || ''} (copia)`,
-    updatedAt: new Date().toISOString()
-  };
-
-  try {
-    await window.savePostToDb(copy);
-    showToast('Idea duplicada ✓');
-  } catch (e) {
-    showToast('Error al duplicar');
-    console.error(e);
-  }
-}
-
-// NEW: auto idea generator
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-function cleanTopic(raw) {
-  const t = String(raw || '').trim().replace(/\s+/g, ' ');
-  return t;
-}
-function extractTemaFromInput(inputText) {
-  // NEW: smart-ish topic extraction (sin APIs, solo heurística)
-  const text = String(inputText || '').trim();
-  if (!text) return '';
-  const lower = text.toLowerCase();
-
-  const keywords = ['sobre', 'de', 'acerca de'];
-  for (const kw of keywords) {
-    const idx = lower.indexOf(kw);
-    if (idx >= 0) {
-      const remainder = text.slice(idx + kw.length).trim();
-      // stop at punctuation/newline to keep it short
-      const cut = remainder.split(/[\n\r\.\!\?\,;]/)[0].trim();
-      const cleaned = cleanTopic(cut);
-      if (cleaned) return cleaned;
-    }
-  }
-
-  // fallback: use first 5-7 words
-  const words = text.split(/\s+/).filter(Boolean);
-  const trimmed = words.slice(0, 6).join(' ');
-  return cleanTopic(trimmed);
-}
-function inferPilarFromText(inputText) {
-  const s = String(inputText || '').toLowerCase();
-  if (/(error|mito|verdad|miente|realmente)/i.test(s)) return 'Educación';
-  if (/(cliente|caso|historia|antes|después|despues)/i.test(s)) return 'Prueba social';
-  if (/(tip|cómo|como|mejorar|mejor|guía|guia|consejo)/i.test(s)) return 'Educación';
-  return 'Educación';
-}
-function pickFormatoFromText(inputText) {
-  // NEW: format priority (rule-based)
-  const lower = String(inputText || '').toLowerCase();
-  if (/(carrusel|slides|slide)/i.test(lower)) return 'Carrusel';
-  if (/(post|publicación|post)/i.test(lower)) return 'Post estático';
-  return pickRandom(['Reel', 'Carrusel', 'Post estático']); // default mix
-}
-function generateTitle(tema) {
-  const n = pickRandom([3, 4, 5]);
-  const templates = [
-    `${n} errores sobre ${tema}`,
-    `Lo que nadie te dice sobre ${tema}`,
-    `Cómo mejorar ${tema}`,
-    `El error más común en ${tema}`,
-    `La verdad sobre ${tema}`,
-  ];
-  return pickRandom(templates);
-}
-function generateHook(tema) {
-  const hooks = [
-    `Si estás haciendo esto, estás perdiendo resultados en ${tema}...`,
-    `Este es el error más común en ${tema}`,
-    `Nadie te explica esto sobre ${tema}`,
-    `El mito que te frena con ${tema}`,
-  ];
-  return pickRandom(hooks);
-}
-function generateBody(tema) {
-  // NEW: body/description as short structure
-  const t = tema || 'este tema';
-  const b1 = `Qué está pasando realmente con ${t}`;
-  const b2 = `El error #1 y cómo corregirlo en 3 pasos`;
-  const b3 = `Mini-plan para aplicar hoy: ${t} sin vueltas`;
-  return `• ${b1}\n• ${b2}\n• ${b3}`;
-}
-async function generateIdeaAuto() {
-  // NEW: UI input -> generated idea -> save in idea bank
-  const inputEl = document.getElementById('gen-idea-input');
-  const raw = inputEl ? inputEl.value : '';
-  const inputText = String(raw || '').trim();
-  if (!inputText) { showToast('Escribí una idea primero'); return; }
-
-  const tema = extractTemaFromInput(inputText);
-  const pilar = inferPilarFromText(inputText);
-  const formato = pickFormatoFromText(inputText);
-  const titulo = generateTitle(tema || 'tu tema');
-  const hook = generateHook(tema || 'tu tema');
-  const notas = generateBody(tema);
-
-  const newId = Date.now().toString() + '_' + Math.random().toString(16).slice(2);
-  const idea = {
-    id: newId,
-    titulo,
-    pilar,
-    formato,
-    fecha: '',
-    estado: 'Idea',
-    hook,
-    notas,
-    cta: '',
-    metrics: null,
-    updatedAt: new Date().toISOString()
-  };
-
-  // UX: clear input immediately
-  inputEl.value = '';
-
-  // Ensure it appears in the current filter (UX: scroll to it)
-  activeFilter = 'all';
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  const btnTodos = Array.from(document.querySelectorAll('.filter-btn')).find(b => {
-    const onclick = b.getAttribute('onclick') || '';
-    return onclick.includes("setFilter('all'");
-  });
-  if (btnTodos) btnTodos.classList.add('active');
-
-  // Optimistic UI: re-render and scroll
-  window.posts.unshift(idea);
-  renderAll();
-
-  setTimeout(() => {
-    const el = document.querySelector(`[data-post-id="${newId}"]`);
-    if (!el) return;
-    el.classList.add('auto-idea-highlight');
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => el.classList.remove('auto-idea-highlight'), 2200);
-  }, 60);
-
-  try {
-    await window.savePostToDb(idea);
-    showToast('Idea generada ✓');
-  } catch (e) {
-    // Revert optimistic insert on failure
-    window.posts = window.posts.filter(p => p.id !== newId);
-    renderAll();
-    showToast('Error al guardar la idea');
-    console.error(e);
-  }
-}
-
 // ── METRICS ───────────────────────────────────────────────────
 function renderMetrics() {
-  const pub = window.posts.filter(p => normalizeEstado(p.estado)==='Publicado');
+  const pub = window.posts.filter(p => p.estado==='publicado');
   document.getElementById('met-total').textContent = pub.length;
   const wm = pub.filter(p => p.metrics && p.metrics.alcance > 0);
   if (wm.length > 0) {
@@ -1224,145 +970,9 @@ async function saveMetrics() {
   } catch(e) { showToast('Error al guardar'); }
 }
 
-// NEW: templates system (localStorage)
-function escapeHtml(str) {
-  return String(str ?? '').replace(/[&<>"']/g, (m) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[m]));
-}
-function loadTemplatesFromLocalStorage() {
-  try {
-    const raw = localStorage.getItem(TEMPLATE_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    templates = Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
-    templates = [];
-  }
-}
-function persistTemplatesToLocalStorage() {
-  localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(templates));
-}
-function getTemplateById(id) {
-  return templates.find(t => t.id === id) || null;
-}
-function applyTemplateToModal(tpl) {
-  if (!tpl) return;
-  document.getElementById('f-hook').value = tpl.hook || '';
-  document.getElementById('f-notas').value = tpl.body || '';
-  document.getElementById('f-cta').value = tpl.cta || '';
-}
-function renderTemplateDropdownOptions() {
-  const sel = document.getElementById('f-plantilla');
-  if (!sel) return;
-  const current = sel.value;
-  const opts = templates.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
-  sel.innerHTML = `<option value="">Sin plantilla</option>${opts}`;
-  if (current && templates.some(t => t.id === current)) sel.value = current;
-}
-function renderTemplatesList() {
-  const listEl = document.getElementById('tpl-list');
-  if (!listEl) return;
-  if (!templates.length) {
-    listEl.innerHTML = `<div class="empty">No hay plantillas todavía.<br>Creá una a la izquierda.</div>`;
-    return;
-  }
-  listEl.innerHTML = templates.map(t => {
-    const hookShort = (t.hook || '').substring(0, 80);
-    const bodyShort = (t.body || '').substring(0, 120);
-    return `
-      <div class="card" style="padding:14px;margin:0">
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <div style="flex:1;min-width:0">
-            <div class="b-label" style="margin-bottom:6px">Plantilla</div>
-            <div style="font-size:13px;color:var(--text);font-weight:500;margin-bottom:6px">${escapeHtml(t.name)}</div>
-            ${t.hook ? `<div class="idea-hook" style="margin-bottom:8px">"${escapeHtml(hookShort)}${String(t.hook).length>80?'…':''}"</div>` : ''}
-            ${t.body ? `<div class="idea-hook" style="margin-bottom:8px">"${escapeHtml(bodyShort)}${String(t.body).length>120?'…':''}"</div>` : ''}
-            ${t.cta ? `<div style="font-size:12px;color:var(--text2)">CTA: ${escapeHtml(t.cta)}</div>` : ''}
-          </div>
-          <div class="btn-row" style="flex-direction:column;align-items:flex-end;gap:8px">
-            <button class="btn" style="padding:7px 12px;font-size:12px" onclick="useTemplate('${t.id}')">Usar</button>
-            <button class="btn btn-ghost" style="padding:7px 12px;font-size:12px;color:var(--coral)" onclick="deleteTemplate('${t.id}')">Eliminar</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function saveTemplate() {
-  // NEW: template creation
-  const name = document.getElementById('tpl-name')?.value.trim() || '';
-  const hook = document.getElementById('tpl-hook')?.value.trim() || '';
-  const body = document.getElementById('tpl-body')?.value.trim() || '';
-  const cta = document.getElementById('tpl-cta')?.value.trim() || '';
-
-  if (!name) { showToast('Agregá un nombre para la plantilla'); return; }
-
-  const tpl = { id: Date.now().toString() + '_' + Math.random().toString(16).slice(2), name, hook, body, cta };
-  templates.unshift(tpl);
-  persistTemplatesToLocalStorage();
-
-  // reset form
-  document.getElementById('tpl-name').value = '';
-  document.getElementById('tpl-hook').value = '';
-  document.getElementById('tpl-body').value = '';
-  document.getElementById('tpl-cta').value = '';
-
-  renderTemplatesList();
-  renderTemplateDropdownOptions();
-  showToast('Plantilla guardada ✓');
-}
-
-function useTemplate(templateId) {
-  // NEW: template usage
-  const tpl = getTemplateById(templateId);
-  if (!tpl) return;
-  openModal(); // new content
-  const sel = document.getElementById('f-plantilla');
-  sel.value = templateId;
-  applyTemplateToModal(tpl);
-}
-
-function deleteTemplate(templateId) {
-  // NEW: template management delete
-  if (!confirm('¿Eliminar esta plantilla?')) return;
-  templates = templates.filter(t => t.id !== templateId);
-  persistTemplatesToLocalStorage();
-  renderTemplatesList();
-  renderTemplateDropdownOptions();
-  showToast('Plantilla eliminada');
-}
-
-function initTemplatesUI() {
-  loadTemplatesFromLocalStorage();
-  renderTemplateDropdownOptions();
-  renderTemplatesList();
-
-  const sel = document.getElementById('f-plantilla');
-  if (sel) {
-    sel.addEventListener('change', (e) => {
-      const id = e.target.value;
-      if (!id) {
-        // NEW: clear fields when no template selected
-        document.getElementById('f-hook').value = '';
-        document.getElementById('f-notas').value = '';
-        document.getElementById('f-cta').value = '';
-        return;
-      }
-      const tpl = getTemplateById(id);
-      if (tpl) applyTemplateToModal(tpl);
-    });
-  }
-}
-
 // ── INIT ──────────────────────────────────────────────────────
 initCalendar();
 initWeekly();
-initTemplatesUI();
 const d = today;
 document.getElementById('dash-date').textContent = `${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]} ${d.getFullYear()}`;
 </script>
