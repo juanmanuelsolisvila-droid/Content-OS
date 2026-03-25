@@ -318,11 +318,65 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 /* LOADING */
 .loading{text-align:center;padding:60px 20px;color:var(--text3);font-size:13px;}
 
+/* MOBILE */
+@media(max-width:768px){
+  #app-shell{flex-direction:column;}
+  .sidebar{width:100%;min-height:auto;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;padding:10px 0 0;border-right:none;border-bottom:1px solid var(--border);}
+  .sidebar-logo{padding:8px 14px 8px;border-bottom:none;border-right:1px solid var(--border);margin-bottom:0;display:flex;flex-direction:column;justify-content:center;min-width:120px;}
+  .sidebar-brand{font-size:13px;}
+  .nav-section{display:none;}
+  .nav-item{padding:8px 12px;font-size:12px;flex:none;}
+  .user-area{margin-top:0;margin-left:auto;border-top:none;border-left:1px solid var(--border);padding:8px 12px;}
+  .page{padding:16px;}
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .metrics-3{grid-template-columns:repeat(2,1fr);}
+  .two-col{grid-template-columns:1fr;}
+  .week-grid{grid-template-columns:repeat(2,1fr);}
+  .ideas-grid{grid-template-columns:1fr;}
+  .brand-grid-2{grid-template-columns:1fr;}
+  .pilares-grid{grid-template-columns:1fr;}
+  .cal-grid{gap:3px;}
+  .cal-cell{min-height:52px;padding:4px;}
+  .cal-date{font-size:10px;}
+  .page-header{flex-wrap:wrap;gap:10px;}
+  .btn-row{flex-wrap:wrap;}
+  .form-row{grid-template-columns:1fr;}
+  .pm-row{grid-template-columns:1fr;gap:6px;}
+  .pm-val{text-align:left;}
+  .met-summary-grid{grid-template-columns:repeat(2,1fr)!important;}
+}
+@media(max-width:480px){
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .week-grid{grid-template-columns:1fr;}
+  .sidebar{overflow-x:auto;}
+  .nav-item{font-size:11px;padding:8px 10px;}
+}
+
+/* METRICS DASHBOARD */
+.met-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px;}
+.met-big{font-size:28px;font-family:'DM Serif Display',serif;}
+.met-pilar-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px;}
+.met-pilar-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
+.met-pilar-title{font-size:12px;font-weight:500;margin-bottom:10px;}
+.met-stat-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px;}
+.met-stat-val{color:var(--text);font-weight:500;}
+.met-table{width:100%;border-collapse:collapse;}
+.met-table th{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);font-weight:500;}
+.met-table td{font-size:12px;padding:10px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+.met-table tr:last-child td{border-bottom:none;}
+.met-table tr:hover td{background:var(--bg3);}
+.met-table td:first-child{color:var(--text);}
+.met-empty-row td{text-align:center;color:var(--text3);padding:24px;}
+.met-add-btn{background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;padding:2px 0;}
+.met-add-btn:hover{text-decoration:underline;}
+
+/* DUPLICATE BTN */
+.dup-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:color .12s;padding:0;}
+.dup-btn:hover{color:var(--teal);}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
 </style>
-</head>
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -468,17 +522,37 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <!-- METRICS ───────────────────────────────────────────── -->
     <div class="page" id="page-metrics">
       <div class="page-header">
-        <div><div class="page-title">Métricas</div><div class="page-sub">Qué funcionó y qué no</div></div>
+        <div><div class="page-title">Métricas</div><div class="page-sub">Resultados registrados — tomá mejores decisiones</div></div>
       </div>
-      <div class="metrics-3">
-        <div class="metric-card"><div class="metric-label">Total publicados</div><div class="metric-value" id="met-total">0</div><div class="metric-sub">posts</div></div>
-        <div class="metric-card"><div class="metric-label">Mejor pilar</div><div class="metric-value" id="met-best" style="font-size:15px;padding-top:6px">—</div><div class="metric-sub">por alcance promedio</div></div>
-        <div class="metric-card"><div class="metric-label">Alcance promedio</div><div class="metric-value" id="met-avg">—</div><div class="metric-sub">por post</div></div>
-      </div>
+      <!-- RESUMEN -->
+      <div class="met-summary-grid" id="met-summary"></div>
+      <!-- POR PILAR -->
+      <div class="b-label" style="margin-bottom:10px">Rendimiento por pilar</div>
+      <div class="met-pilar-grid" id="met-pilar-grid"></div>
+      <!-- TABLA COMPLETA -->
       <div class="card">
-        <div class="b-label" style="margin-bottom:4px">Posts publicados</div>
-        <div class="b-label" style="font-size:11px;text-transform:none;letter-spacing:0;margin-bottom:14px;color:var(--text2)">Hacé clic en una fila para cargar los números del post</div>
-        <div id="metrics-list" style="display:flex;flex-direction:column;gap:7px;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="b-label">Todos los posts publicados</div>
+          <div class="b-label" style="font-size:11px;text-transform:none;letter-spacing:0;color:var(--text2)">Hacé clic en "+ cargar" para registrar los números</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="met-table" id="met-table">
+            <thead>
+              <tr>
+                <th>Post</th>
+                <th>Pilar</th>
+                <th>Alcance</th>
+                <th>Guardados</th>
+                <th>Comentarios</th>
+                <th>Compartidos</th>
+                <th>Seguidores</th>
+                <th>Visitas perfil</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="met-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -681,17 +755,21 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <div class="modal-title">Registrar métricas</div>
     <div id="met-info" style="margin-bottom:14px;padding:10px;background:var(--bg3);border-radius:var(--radius);font-size:13px;color:var(--text2)"></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Alcance</label><input class="form-input" id="met-alcance" type="number" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Alcance / impresiones</label><input class="form-input" id="met-alcance" type="number" placeholder="0"></div>
       <div class="form-group"><label class="form-label">Guardados</label><input class="form-input" id="met-guardados" type="number" placeholder="0"></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Comentarios</label><input class="form-input" id="met-coms" type="number" placeholder="0"></div>
-      <div class="form-group"><label class="form-label">Compartidos</label><input class="form-input" id="met-comps" type="number" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Compartidos / enviados</label><input class="form-input" id="met-comps" type="number" placeholder="0"></div>
     </div>
-    <div class="form-group"><label class="form-label">Notas (qué funcionó, qué no)</label><textarea class="form-textarea" id="met-notas" style="min-height:65px" placeholder="Ej: el hook funcionó muy bien, muchos guardados..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Seguidores ganados</label><input class="form-input" id="met-seguidores" type="number" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Visitas al perfil</label><input class="form-input" id="met-visitas" type="number" placeholder="0"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notas — qué funcionó, qué no</label><textarea class="form-textarea" id="met-notas" style="min-height:65px" placeholder="Ej: el hook funcionó muy bien, muchos guardados, el pilar de conexión tuvo más alcance..."></textarea></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeMetModal()">Cancelar</button>
-      <button class="btn" onclick="saveMetrics()">Guardar</button>
+      <button class="btn" onclick="saveMetrics()">Guardar métricas</button>
     </div>
   </div>
 </div>
@@ -821,7 +899,10 @@ function openModal(postId) {
     }
   } else {
     document.getElementById('f-titulo').value = '';
-    document.getElementById('f-pilar').value = 'Educación';
+    // Auto-set pilar from active filter
+    const filterPilar = activeFilter && activeFilter.startsWith('active_') && !['active_all','active_idea','active_en proceso'].includes(activeFilter)
+      ? activeFilter.replace('active_','') : 'Educación';
+    document.getElementById('f-pilar').value = filterPilar;
     document.getElementById('f-formato').value = 'Reel';
     document.getElementById('f-fecha').value = todayStr();
     document.getElementById('f-estado').value = 'idea';
@@ -1180,6 +1261,7 @@ function renderIdeas() {
       <div class="idea-meta">
         <span class="badge ${PILAR_CLASS[p.pilar]}">${p.pilar}</span>
         <span class="badge ${estadoBadge(p.estado)}">${p.estado}</span>
+        <button class="dup-btn" onclick="duplicatePost('${p.id}',event)" title="Duplicar" style="margin-left:auto">⧉ duplicar</button>
       </div>
       <div class="idea-title">${p.titulo}</div>
       ${p.hook ? `<div class="idea-hook">"${p.hook.substring(0,75)}${p.hook.length>75?'…':''}"</div>` : ''}
@@ -1191,56 +1273,96 @@ function renderIdeas() {
 }
 
 // ── METRICS ───────────────────────────────────────────────────
+function fmt(n) { return n != null && n !== '' ? Number(n).toLocaleString('es-AR') : '—'; }
+
 function renderMetrics() {
-  const pub = window.posts.filter(p => p.estado==='publicado');
-  document.getElementById('met-total').textContent = pub.length;
-  const wm = pub.filter(p => p.metrics && p.metrics.alcance > 0);
-  if (wm.length > 0) {
-    const avg = Math.round(wm.reduce((s,p) => s+p.metrics.alcance, 0) / wm.length);
-    document.getElementById('met-avg').textContent = avg.toLocaleString('es-AR');
-    const byPilar = {};
-    wm.forEach(p => { if(!byPilar[p.pilar]) byPilar[p.pilar]=[]; byPilar[p.pilar].push(p.metrics.alcance); });
-    let best='', bestA=0;
-    Object.entries(byPilar).forEach(([k,v]) => { const a=v.reduce((s,x)=>s+x,0)/v.length; if(a>bestA){bestA=a;best=k;} });
-    document.getElementById('met-best').textContent = best || '—';
+  const pub = window.posts.filter(p => p.estado === 'publicado');
+  const wm  = pub.filter(p => p.metrics && p.metrics.alcance > 0);
+
+  // Summary cards
+  const totAlcance = wm.reduce((s,p) => s + (p.metrics.alcance||0), 0);
+  const avgAlcance = wm.length ? Math.round(totAlcance / wm.length) : 0;
+  const byPilar = {};
+  wm.forEach(p => {
+    if (!byPilar[p.pilar]) byPilar[p.pilar] = {count:0,alcance:0,guardados:0,comentarios:0,compartidos:0,seguidores:0,visitas:0};
+    const b = byPilar[p.pilar], m = p.metrics;
+    b.count++; b.alcance+=m.alcance||0; b.guardados+=m.guardados||0;
+    b.comentarios+=m.comentarios||0; b.compartidos+=m.compartidos||0;
+    b.seguidores+=m.seguidores||0; b.visitas+=m.visitas||0;
+  });
+  let bestPilar = '—', bestAvg = 0;
+  Object.entries(byPilar).forEach(([k,v]) => { const a=v.alcance/v.count; if(a>bestAvg){bestAvg=a;bestPilar=k;} });
+
+  document.getElementById('met-summary').innerHTML = `
+    <div class="metric-card"><div class="metric-label">Posts publicados</div><div class="met-big">${pub.length}</div><div class="metric-sub">${wm.length} con métricas</div></div>
+    <div class="metric-card"><div class="metric-label">Alcance promedio</div><div class="met-big" style="color:var(--accent)">${fmt(avgAlcance)}</div><div class="metric-sub">por post</div></div>
+    <div class="metric-card"><div class="metric-label">Mejor pilar</div><div class="met-big" style="font-size:16px;padding-top:6px;color:${PILAR_COLOR[bestPilar]||'var(--text)'}">${bestPilar}</div><div class="metric-sub">por alcance promedio</div></div>`;
+
+  // Per-pilar cards
+  const pilarGrid = document.getElementById('met-pilar-grid');
+  if (Object.keys(byPilar).length === 0) {
+    pilarGrid.innerHTML = `<div style="grid-column:1/-1;color:var(--text3);font-size:13px;padding:12px 0">Registrá métricas en tus posts publicados para ver el análisis por pilar.</div>`;
   } else {
-    document.getElementById('met-avg').textContent = '—';
-    document.getElementById('met-best').textContent = '—';
+    pilarGrid.innerHTML = Object.entries(byPilar).map(([k,v]) => `
+      <div class="met-pilar-card" style="border-color:${PILAR_COLOR[k]}30">
+        <div class="met-pilar-title" style="color:${PILAR_COLOR[k]}">${k} <span style="color:var(--text3);font-weight:400">(${v.count} post${v.count>1?'s':''})</span></div>
+        <div class="met-stat-row"><span>Alcance prom.</span><span class="met-stat-val">${fmt(Math.round(v.alcance/v.count))}</span></div>
+        <div class="met-stat-row"><span>Guardados</span><span class="met-stat-val">${fmt(v.guardados)}</span></div>
+        <div class="met-stat-row"><span>Comentarios</span><span class="met-stat-val">${fmt(v.comentarios)}</span></div>
+        <div class="met-stat-row"><span>Compartidos</span><span class="met-stat-val">${fmt(v.compartidos)}</span></div>
+        <div class="met-stat-row"><span>Seguidores ganados</span><span class="met-stat-val">${fmt(v.seguidores)}</span></div>
+      </div>`).join('');
   }
-  const list = document.getElementById('metrics-list');
-  if (pub.length === 0) { list.innerHTML = '<div class="empty">No hay posts publicados todavía.</div>'; return; }
-  list.innerHTML = pub.map(p => `
-    <div class="pm-row" onclick="openMetModal('${p.id}')">
-      <div><span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px;margin-right:6px">${p.pilar}</span><span class="pm-title">${p.titulo}</span></div>
-      <div class="pm-val">${p.metrics ? p.metrics.alcance.toLocaleString('es-AR') : '—'}<span>alcance</span></div>
-      <div class="pm-val">${p.metrics ? p.metrics.guardados : '—'}<span>guardados</span></div>
-      <div class="pm-val">${p.metrics ? p.metrics.comentarios : '—'}<span>comentarios</span></div>
-      <div class="pm-val" style="color:var(--accent)">${p.metrics ? '✓' : '+ cargar'}</div>
-    </div>`).join('');
+
+  // Full table
+  const tbody = document.getElementById('met-tbody');
+  if (pub.length === 0) {
+    tbody.innerHTML = `<tr class="met-empty-row"><td colspan="9">No hay posts publicados todavía.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = pub.sort((a,b) => (b.fecha||'') > (a.fecha||'') ? 1 : -1).map(p => {
+    const m = p.metrics;
+    const hasM = m && m.alcance > 0;
+    return `<tr>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.titulo}">${p.titulo}</td>
+      <td><span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span></td>
+      <td>${hasM ? fmt(m.alcance) : '<button class="met-add-btn" onclick="openMetModal(\''+p.id+'\')">+ cargar</button>'}</td>
+      <td>${hasM ? fmt(m.guardados) : '—'}</td>
+      <td>${hasM ? fmt(m.comentarios) : '—'}</td>
+      <td>${hasM ? fmt(m.compartidos) : '—'}</td>
+      <td>${hasM ? fmt(m.seguidores) : '—'}</td>
+      <td>${hasM ? fmt(m.visitas) : '—'}</td>
+      <td><button class="met-add-btn" onclick="openMetModal('${p.id}')" style="color:var(--text3)">${hasM ? 'editar' : ''}</button></td>
+    </tr>`;
+  }).join('');
 }
 
 function openMetModal(id) {
   metPostId = id;
-  const p = window.posts.find(x => x.id===id);
+  const p = window.posts.find(x => x.id === id);
   document.getElementById('met-info').textContent = p.titulo;
-  document.getElementById('met-alcance').value = p.metrics?.alcance || '';
-  document.getElementById('met-guardados').value = p.metrics?.guardados || '';
-  document.getElementById('met-coms').value = p.metrics?.comentarios || '';
-  document.getElementById('met-comps').value = p.metrics?.compartidos || '';
-  document.getElementById('met-notas').value = p.metrics?.notas || '';
+  document.getElementById('met-alcance').value   = p.metrics?.alcance    || '';
+  document.getElementById('met-guardados').value = p.metrics?.guardados  || '';
+  document.getElementById('met-coms').value      = p.metrics?.comentarios|| '';
+  document.getElementById('met-comps').value     = p.metrics?.compartidos|| '';
+  document.getElementById('met-seguidores').value= p.metrics?.seguidores || '';
+  document.getElementById('met-visitas').value   = p.metrics?.visitas    || '';
+  document.getElementById('met-notas').value     = p.metrics?.notas      || '';
   document.getElementById('met-overlay').classList.add('open');
 }
-function closeMetModal() { document.getElementById('met-overlay').classList.remove('open'); metPostId=null; }
-function closeMetOut(e) { if(e.target===document.getElementById('met-overlay')) closeMetModal(); }
+function closeMetModal() { document.getElementById('met-overlay').classList.remove('open'); metPostId = null; }
+function closeMetOut(e)  { if (e.target === document.getElementById('met-overlay')) closeMetModal(); }
 
 async function saveMetrics() {
-  const idx = window.posts.findIndex(x => x.id===metPostId);
+  const idx = window.posts.findIndex(x => x.id === metPostId);
   if (idx < 0) return;
   const post = { ...window.posts[idx], metrics: {
-    alcance: parseInt(document.getElementById('met-alcance').value)||0,
-    guardados: parseInt(document.getElementById('met-guardados').value)||0,
-    comentarios: parseInt(document.getElementById('met-coms').value)||0,
-    compartidos: parseInt(document.getElementById('met-comps').value)||0,
+    alcance:     parseInt(document.getElementById('met-alcance').value)    || 0,
+    guardados:   parseInt(document.getElementById('met-guardados').value)  || 0,
+    comentarios: parseInt(document.getElementById('met-coms').value)       || 0,
+    compartidos: parseInt(document.getElementById('met-comps').value)      || 0,
+    seguidores:  parseInt(document.getElementById('met-seguidores').value) || 0,
+    visitas:     parseInt(document.getElementById('met-visitas').value)    || 0,
     notas: document.getElementById('met-notas').value
   }};
   try {
@@ -1248,6 +1370,18 @@ async function saveMetrics() {
     closeMetModal();
     showToast('Métricas guardadas ✓');
   } catch(e) { showToast('Error al guardar'); }
+}
+
+// ── DUPLICATE POST ────────────────────────────────────────────
+async function duplicatePost(id, e) {
+  e.stopPropagation();
+  const src = window.posts.find(p => p.id === id);
+  if (!src) return;
+  const copy = { ...src, id: Date.now().toString(), titulo: src.titulo + ' (copia)', estado: 'idea', metrics: null, updatedAt: new Date().toISOString() };
+  try {
+    await window.savePostToDb(copy);
+    showToast('Duplicado ✓');
+  } catch(err) { showToast('Error al duplicar'); }
 }
 
 // ── INIT ──────────────────────────────────────────────────────
