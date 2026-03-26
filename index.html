@@ -195,7 +195,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .pilar-social{background:var(--coral-dim);color:var(--coral);border:1px solid rgba(240,144,123,0.2);}
 .pilar-conv{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,185,66,0.2);}
 .estado-idea{background:rgba(255,255,255,0.04);color:var(--text3);border:1px solid var(--border);}
-.estado-proceso{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,185,66,0.2);}
+.estado-listo{background:rgba(200,240,110,0.08);color:#c8f06e;border:1px solid rgba(200,240,110,0.3);}
 .estado-publicado{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(200,240,110,0.2);}
 
 /* CARDS */
@@ -224,6 +224,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .cal-cell{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);min-height:76px;padding:7px;cursor:pointer;transition:border-color 0.12s;}
 .cal-cell:hover{border-color:var(--border2);}
 .cal-cell.empty{background:transparent;border-color:transparent;cursor:default;}
+.cal-cell.cal-overflow{background:var(--bg2);border-color:var(--border);opacity:0.55;}
+.cal-cell.cal-overflow:hover{opacity:0.85;border-color:var(--border2);}
 .week-card[draggable]{cursor:grab;transition:opacity .15s,border-color .15s;}
 .week-card[draggable]:active{cursor:grabbing;}
 .cal-dot[draggable]{cursor:grab;}
@@ -437,7 +439,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="metrics-grid">
         <div class="metric-card"><div class="metric-label">Este mes</div><div class="metric-value" id="m-total">—</div><div class="metric-sub">planificados</div></div>
         <div class="metric-card"><div class="metric-label">Publicados</div><div class="metric-value" id="m-pub" style="color:var(--accent)">—</div><div class="metric-sub">este mes</div></div>
-        <div class="metric-card"><div class="metric-label">En proceso</div><div class="metric-value" id="m-proc" style="color:var(--amber)">—</div><div class="metric-sub">pendientes</div></div>
+        <div class="metric-card"><div class="metric-label">En proceso</div><div class="metric-value" id="m-proc" style="color:var(--amber)">—</div><div class="metric-sub">listos para publicar</div></div>
         <div class="metric-card"><div class="metric-label">Ideas</div><div class="metric-value" id="m-idea" style="color:var(--text2)">—</div><div class="metric-sub">en banco</div></div>
       </div>
       <div class="two-col">
@@ -482,7 +484,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
     <!-- IDEAS ─────────────────────────────────────────────── -->
     <div class="page" id="page-ideas">
       <div class="page-header">
-        <div><div class="page-title">Banco de ideas</div><div class="page-sub" id="ideas-sub">Ideas y contenido en proceso</div></div>
+        <div><div class="page-title">Banco de ideas</div><div class="page-sub" id="ideas-sub">Ideas y contenido pendiente</div></div>
         <button class="btn" onclick="openModal()">+ Nueva idea</button>
       </div>
       <!-- TABS -->
@@ -498,7 +500,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
         <button class="filter-btn" style="color:var(--coral)" onclick="setFilter('active_Prueba social',this)">Prueba social</button>
         <button class="filter-btn" style="color:var(--amber)" onclick="setFilter('active_Conversión',this)">Conversión</button>
         <button class="filter-btn" onclick="setFilter('active_idea',this)">Idea</button>
-        <button class="filter-btn" onclick="setFilter('active_en proceso',this)">En proceso</button>
+        <button class="filter-btn" onclick="setFilter('active_grabar',this)">Grabar</button>
+        <button class="filter-btn" onclick="setFilter('active_listo',this)">Listo</button>
       </div>
       <!-- FILTROS — PUBLICADOS -->
       <div id="filters-publicados" class="filters" style="display:none">
@@ -729,7 +732,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="form-group">
         <label class="form-label">Estado</label>
         <select class="form-select" id="f-estado">
-          <option value="idea">Idea</option><option value="en proceso">En proceso</option><option value="grabar">Grabar</option><option value="publicado">Publicado</option>
+          <option value="idea">Idea</option><option value="listo">Listo</option><option value="grabar">Grabar</option><option value="publicado">Publicado</option>
         </select>
       </div>
     </div>
@@ -805,8 +808,8 @@ function todayStr() {
 
 function estadoBadge(e) {
   if (e==='publicado') return 'estado-publicado';
-  if (e==='en proceso') return 'estado-proceso';
-  if (e==='grabar') return 'estado-grabar';
+  if (e==='listo')     return 'estado-listo';
+  if (e==='grabar')    return 'estado-grabar';
   return 'estado-idea';
 }
 
@@ -900,7 +903,7 @@ function openModal(postId) {
   } else {
     document.getElementById('f-titulo').value = '';
     // Auto-set pilar from active filter
-    const filterPilar = activeFilter && activeFilter.startsWith('active_') && !['active_all','active_idea','active_en proceso'].includes(activeFilter)
+    const filterPilar = activeFilter && activeFilter.startsWith('active_') && !['active_all','active_idea','active_listo'].includes(activeFilter)
       ? activeFilter.replace('active_','') : 'Educación';
     document.getElementById('f-pilar').value = filterPilar;
     document.getElementById('f-formato').value = 'Reel';
@@ -960,7 +963,7 @@ function renderDashboard() {
   const thisMonth = window.posts.filter(p => p.fecha && p.fecha.startsWith(ym));
   document.getElementById('m-total').textContent = thisMonth.length;
   document.getElementById('m-pub').textContent = thisMonth.filter(p => p.estado==='publicado').length;
-  document.getElementById('m-proc').textContent = thisMonth.filter(p => p.estado==='en proceso').length;
+  document.getElementById('m-proc').textContent = thisMonth.filter(p => p.estado==='listo').length;
   document.getElementById('m-idea').textContent = window.posts.filter(p => p.estado==='idea').length;
 
   const counts = {'Educación':0,'Conexión':0,'Prueba social':0,'Conversión':0};
@@ -1004,9 +1007,17 @@ function renderCalendar() {
   const dayNames = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
   const grid = document.getElementById('cal-grid');
   let html = dayNames.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
   const first = new Date(calYear, calMonth, 1);
   let startDay = first.getDay() - 1; if (startDay < 0) startDay = 6;
-  for (let i = 0; i < startDay; i++) html += `<div class="cal-cell empty"></div>`;
+
+  // Days from prev month (visual fill, not interactive)
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  for (let i = startDay - 1; i >= 0; i--) {
+    html += `<div class="cal-cell empty" style="opacity:0.25"><div class="cal-date">${prevDays - i}</div></div>`;
+  }
+
+  // Days of current month
   const days = new Date(calYear, calMonth+1, 0).getDate();
   for (let d = 1; d <= days; d++) {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -1027,9 +1038,37 @@ function renderCalendar() {
         ondragstart="calDragStart(event,'${p.id}')"
         ondragend="calDragEnd(event)"
         onclick="event.stopPropagation();openModal('${p.id}')"
-      >${p.titulo.substring(0,18)}…</span>`).join('')}
+      >${p.estado==='listo'?'✓ ':''} ${p.titulo.substring(0,16)}…</span>`).join('')}
     </div>`;
   }
+
+  // Days from next month — fully interactive for drag & drop
+  const totalCells = startDay + days;
+  const nextDaysNeeded = totalCells % 7 === 0 ? 7 : 7 - (totalCells % 7);
+  const nextYear  = calMonth === 11 ? calYear + 1 : calYear;
+  const nextMonth = calMonth === 11 ? 0 : calMonth + 1;
+  for (let d = 1; d <= nextDaysNeeded; d++) {
+    const ds = `${nextYear}-${String(nextMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dp = window.posts.filter(p => p.fecha === ds);
+    html += `<div class="cal-cell cal-overflow"
+      data-date="${ds}"
+      ondragover="calDragOver(event)"
+      ondragleave="calDragLeave(event)"
+      ondrop="calDrop(event,'${ds}')"
+      onclick="calCellClick(event,'${ds}')">
+      <div class="cal-date" style="color:var(--text3)">${d} <span style="font-size:9px;color:var(--text3)">${MESES[nextMonth].substring(0,3)}</span></div>
+      ${dp.map(p => `<span
+        class="cal-dot badge ${PILAR_CLASS[p.pilar]}"
+        style="font-size:9px;cursor:grab;opacity:0.75"
+        draggable="true"
+        data-id="${p.id}"
+        ondragstart="calDragStart(event,'${p.id}')"
+        ondragend="calDragEnd(event)"
+        onclick="event.stopPropagation();openModal('${p.id}')"
+      >${p.estado==='listo'?'✓ ':''} ${p.titulo.substring(0,16)}…</span>`).join('')}
+    </div>`;
+  }
+
   grid.innerHTML = html;
 }
 
@@ -1116,7 +1155,7 @@ function renderWeekly() {
           onclick="openModal('${p.id}')"
           style="cursor:grab">
           <span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span>
-          <div class="week-card-title">${p.titulo}</div>
+          <div class="week-card-title">${p.estado==='listo' ? '<span style="color:#c8f06e;margin-right:4px">✓</span>' : ''}${p.titulo}</div>
           <span class="badge ${estadoBadge(p.estado)}" style="font-size:9px">${p.estado}</span>
         </div>`).join('')}
         <button class="week-add" onclick="openModal()">+ agregar</button>
@@ -1213,7 +1252,7 @@ function switchIdeasTab(tab) {
     tP.style.borderBottomColor = 'transparent'; tP.style.color = 'var(--text2)';
     document.getElementById('filters-activos').style.display = 'flex';
     document.getElementById('filters-publicados').style.display = 'none';
-    document.getElementById('ideas-sub').textContent = 'Ideas y contenido en proceso';
+    document.getElementById('ideas-sub').textContent = 'Ideas y contenido pendiente';
     activeFilter = 'active_all';
     document.querySelectorAll('#filters-activos .filter-btn').forEach((b,i) => b.classList.toggle('active', i===0));
   } else {
@@ -1240,9 +1279,10 @@ function renderIdeas() {
   let list = window.posts;
   if (ideasTab === 'activos') {
     list = list.filter(p => p.estado !== 'publicado');
-    if (activeFilter === 'active_idea') list = list.filter(p => p.estado === 'idea');
-    else if (activeFilter === 'active_en proceso') list = list.filter(p => p.estado === 'en proceso');
-    else if (activeFilter && activeFilter.startsWith('active_') && !['active_all','active_idea','active_en proceso'].includes(activeFilter)) {
+    if (activeFilter === 'active_idea')   list = list.filter(p => p.estado === 'idea');
+    else if (activeFilter === 'active_grabar') list = list.filter(p => p.estado === 'grabar');
+    else if (activeFilter === 'active_listo')  list = list.filter(p => p.estado === 'listo');
+    else if (activeFilter && activeFilter.startsWith('active_') && !['active_all','active_idea','active_grabar','active_listo'].includes(activeFilter)) {
       list = list.filter(p => p.pilar === activeFilter.replace('active_',''));
     }
   } else {
