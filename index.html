@@ -234,6 +234,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .cal-date{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;}
 .cal-cell.today .cal-date{color:var(--accent);}
 .cal-dot{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+.fmt-icon{display:inline-flex;align-items:center;justify-content:center;width:14px;margin-right:4px;font-size:10px;}
 
 /* WEEKLY */
 .week-nav-row{display:flex;align-items:center;gap:10px;}
@@ -247,6 +248,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .week-posts{padding:7px;display:flex;flex-direction:column;gap:5px;min-height:110px;}
 .week-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px;cursor:pointer;transition:border-color 0.12s;}
 .week-card:hover{border-color:var(--border2);}
+.week-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.week-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.week-format{font-size:10px;color:var(--text2);display:inline-flex;align-items:center;gap:4px;}
 .week-card-title{font-size:11px;color:var(--text);line-height:1.3;margin:4px 0 3px;}
 .week-add{width:100%;background:none;border:1px dashed var(--border);border-radius:8px;padding:7px;color:var(--text3);cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;transition:all 0.12s;}
 .week-add:hover{border-color:var(--border2);color:var(--text2);}
@@ -720,7 +724,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
       <div class="form-group">
         <label class="form-label">Formato</label>
         <select class="form-select" id="f-formato">
-          <option>Reel</option><option>Carrusel</option><option>Story</option><option>Historia</option><option>Post estático</option><option>TikTok</option>
+          <option>Reel</option><option>Story</option><option>Carrusel</option>
         </select>
       </div>
     </div>
@@ -795,6 +799,8 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 // ── HELPERS ───────────────────────────────────────────────────
+const FORMATO_ICON = { Reel: '&#127909;', Story: '&#128241;', Carrusel: '&#128444;' };
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -811,6 +817,23 @@ function estadoBadge(e) {
   if (e==='listo')     return 'estado-listo';
   if (e==='grabar')    return 'estado-grabar';
   return 'estado-idea';
+}
+
+function normalizeFormato(formato) {
+  if (formato === 'Historia') return 'Story';
+  return FORMATO_ICON[formato] ? formato : 'Reel';
+}
+
+function formatoIcon(formato) {
+  return FORMATO_ICON[normalizeFormato(formato)];
+}
+
+function formatoLabel(formato) {
+  return normalizeFormato(formato);
+}
+
+function showCalendarCheck(estado) {
+  return estado === 'listo' || estado === 'publicado';
 }
 
 function renderAll() {
@@ -894,7 +917,7 @@ function openModal(postId) {
     if (p) {
       document.getElementById('f-titulo').value = p.titulo || '';
       document.getElementById('f-pilar').value = p.pilar || 'Educación';
-      document.getElementById('f-formato').value = p.formato || 'Reel';
+      document.getElementById('f-formato').value = formatoLabel(p.formato);
       document.getElementById('f-fecha').value = p.fecha || '';
       document.getElementById('f-estado').value = p.estado || 'idea';
       document.getElementById('f-hook').value = p.hook || '';
@@ -925,7 +948,7 @@ async function savePost() {
     id: editingId || Date.now().toString(),
     titulo,
     pilar: document.getElementById('f-pilar').value,
-    formato: document.getElementById('f-formato').value,
+    formato: formatoLabel(document.getElementById('f-formato').value),
     fecha: document.getElementById('f-fecha').value,
     estado: document.getElementById('f-estado').value,
     hook: document.getElementById('f-hook').value,
@@ -1038,7 +1061,7 @@ function renderCalendar() {
         ondragstart="calDragStart(event,'${p.id}')"
         ondragend="calDragEnd(event)"
         onclick="event.stopPropagation();openModal('${p.id}')"
-      >${p.estado==='listo'?'✓ ':''} ${p.titulo.substring(0,16)}…</span>`).join('')}
+      ><span class="fmt-icon">${formatoIcon(p.formato)}</span>${showCalendarCheck(p.estado)?'&#10003; ':''}${p.titulo.substring(0,16)}…</span>`).join('')}
     </div>`;
   }
 
@@ -1065,7 +1088,7 @@ function renderCalendar() {
         ondragstart="calDragStart(event,'${p.id}')"
         ondragend="calDragEnd(event)"
         onclick="event.stopPropagation();openModal('${p.id}')"
-      >${p.estado==='listo'?'✓ ':''} ${p.titulo.substring(0,16)}…</span>`).join('')}
+      ><span class="fmt-icon">${formatoIcon(p.formato)}</span>${showCalendarCheck(p.estado)?'&#10003; ':''}${p.titulo.substring(0,16)}…</span>`).join('')}
     </div>`;
   }
 
@@ -1154,9 +1177,14 @@ function renderWeekly() {
           ondrop="weekCardDrop(event,'${p.id}','${ds}')"
           onclick="openModal('${p.id}')"
           style="cursor:grab">
-          <span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span>
-          <div class="week-card-title">${p.estado==='listo' ? '<span style="color:#c8f06e;margin-right:4px">✓</span>' : ''}${p.titulo}</div>
-          <span class="badge ${estadoBadge(p.estado)}" style="font-size:9px">${p.estado}</span>
+          <div class="week-card-head">
+            <span class="badge ${PILAR_CLASS[p.pilar]}" style="font-size:9px">${p.pilar}</span>
+            <span class="week-format"><span>${formatoIcon(p.formato)}</span>${formatoLabel(p.formato)}</span>
+          </div>
+          <div class="week-card-title">${showCalendarCheck(p.estado) ? '<span style="color:#c8f06e;margin-right:4px">&#10003;</span>' : ''}${p.titulo}</div>
+          <div class="week-card-meta">
+            <span class="badge ${estadoBadge(p.estado)}" style="font-size:9px">${p.estado}</span>
+          </div>
         </div>`).join('')}
         <button class="week-add" onclick="openModal()">+ agregar</button>
       </div>
