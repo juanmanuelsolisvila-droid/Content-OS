@@ -234,6 +234,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .cal-date{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;}
 .cal-cell.today .cal-date{color:var(--accent);}
 .cal-dot{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+.cal-dot-story{background:rgba(168,159,245,0.2)!important;color:#f1edff!important;border:1px solid rgba(168,159,245,0.55)!important;border-radius:999px;padding:3px 7px;font-weight:600;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05);}
 .fmt-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:6px;vertical-align:middle;}
 .fmt-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 
@@ -249,6 +250,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .week-posts{padding:7px;display:flex;flex-direction:column;gap:5px;min-height:110px;}
 .week-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px;cursor:pointer;transition:border-color 0.12s;}
 .week-card:hover{border-color:var(--border2);}
+.week-card-story{border-color:rgba(168,159,245,0.45);background:linear-gradient(180deg, rgba(168,159,245,0.12), rgba(30,30,27,0.95));box-shadow:inset 3px 0 0 #a89ff5;}
+.week-card-story .week-format{color:#e9e3ff;}
 .week-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .week-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;}
 .week-format{font-size:10px;color:var(--text2);display:inline-flex;align-items:center;gap:4px;}
@@ -847,11 +850,76 @@ function formatoLabel(formato) {
   return normalizeFormato(formato);
 }
 
+function isStoryFormat(formato) {
+  return normalizeFormato(formato) === 'Story';
+}
+
 function showCalendarCheck(estado) {
   return estado === 'listo' || estado === 'publicado';
 }
 
+function normalizeFilterValue(value) {
+  return value
+    .replaceAll('EducaciÃƒÂ³n', 'Educación')
+    .replaceAll('ConexiÃƒÂ³n', 'Conexión')
+    .replaceAll('ConversiÃƒÂ³n', 'Conversión')
+    .replaceAll('EducaciÃ³n', 'Educación')
+    .replaceAll('ConexiÃ³n', 'Conexión')
+    .replaceAll('ConversiÃ³n', 'Conversión');
+}
+
+function syncIdeasUiCopy() {
+  const readyButtons = document.querySelectorAll('#filters-listos .filter-btn');
+  const readyLabels = ['Todos', 'Educación', 'Conexión', 'Prueba social', 'Conversión'];
+  readyButtons.forEach((btn, index) => {
+    if (readyLabels[index]) btn.textContent = readyLabels[index];
+  });
+}
+
+function normalizeReadyFilterValue(value) {
+  if (value.startsWith('ready_')) {
+    if (value.includes('Educaci')) return 'ready_Educación';
+    if (value.includes('Conexi')) return 'ready_Conexión';
+    if (value.includes('Conversi')) return 'ready_Conversión';
+  }
+  return normalizeFilterValue(value);
+}
+
+function syncIdeasUiCopySafe() {
+  const readyButtons = document.querySelectorAll('#filters-listos .filter-btn');
+  const readyLabels = ['Todos', 'Educaci\u00f3n', 'Conexi\u00f3n', 'Prueba social', 'Conversi\u00f3n'];
+  readyButtons.forEach((btn, index) => {
+    if (readyLabels[index]) btn.textContent = readyLabels[index];
+  });
+}
+
+function normalizeReadyFilterValueSafe(value) {
+  if (value.startsWith('ready_')) {
+    if (value.includes('Educaci')) return 'ready_educacion';
+    if (value.includes('Conexi')) return 'ready_conexion';
+    if (value.includes('Conversi')) return 'ready_conversion';
+    if (value.includes('Prueba social')) return 'ready_prueba_social';
+  }
+  return value;
+}
+
+function matchesPilarFilter(filterValue, postPilar) {
+  if (filterValue.endsWith('_educacion')) return postPilar.includes('Educaci');
+  if (filterValue.endsWith('_conexion')) return postPilar.includes('Conexi');
+  if (filterValue.endsWith('_conversion')) return postPilar.includes('Conversi');
+  if (filterValue.endsWith('_prueba_social')) return postPilar === 'Prueba social';
+
+  const raw = filterValue.replace(/^(active_|ready_|pub_)/, '');
+  if (raw.includes('Educaci')) return postPilar.includes('Educaci');
+  if (raw.includes('Conexi')) return postPilar.includes('Conexi');
+  if (raw.includes('Conversi')) return postPilar.includes('Conversi');
+  if (raw === 'Prueba social') return postPilar === 'Prueba social';
+  return postPilar === raw;
+}
+
 function renderAll() {
+  syncIdeasUiCopy();
+  syncIdeasUiCopySafe();
   renderDashboard();
   renderCalendar();
   renderWeekly();
@@ -1069,7 +1137,7 @@ function renderCalendar() {
       onclick="calCellClick(event,'${ds}')">
       <div class="cal-date">${d}</div>
       ${dp.map(p => `<span
-        class="cal-dot badge ${PILAR_CLASS[p.pilar]}"
+        class="cal-dot badge ${PILAR_CLASS[p.pilar]}${isStoryFormat(p.formato) ? ' cal-dot-story' : ''}"
         style="font-size:9px;cursor:grab"
         draggable="true"
         data-id="${p.id}"
@@ -1096,7 +1164,7 @@ function renderCalendar() {
       onclick="calCellClick(event,'${ds}')">
       <div class="cal-date" style="color:var(--text3)">${d} <span style="font-size:9px;color:var(--text3)">${MESES[nextMonth].substring(0,3)}</span></div>
       ${dp.map(p => `<span
-        class="cal-dot badge ${PILAR_CLASS[p.pilar]}"
+        class="cal-dot badge ${PILAR_CLASS[p.pilar]}${isStoryFormat(p.formato) ? ' cal-dot-story' : ''}"
         style="font-size:9px;cursor:grab;opacity:0.75"
         draggable="true"
         data-id="${p.id}"
@@ -1182,7 +1250,7 @@ function renderWeekly() {
         ondragleave="weekDragLeave(event)"
         ondrop="weekDrop(event,'${ds}')">
         ${dp.map(p => `<div
-          class="week-card"
+          class="week-card${isStoryFormat(p.formato) ? ' week-card-story' : ''}"
           draggable="true"
           data-id="${p.id}"
           data-date="${ds}"
@@ -1308,7 +1376,7 @@ function switchIdeasTab(tab) {
 
   if (tab === 'activos') {
     activateIdeasTab('tab-activos');
-    document.getElementById('ideas-sub').textContent = 'Ideas y contenido que todavÃ­a falta pensar, guionizar o grabar';
+    document.getElementById('ideas-sub').textContent = 'Ideas y contenido que todav\u00eda falta pensar, guionizar o grabar';
     activeFilter = 'active_all';
     resetTabFilters('#filters-activos');
   } else if (tab === 'listos') {
@@ -1318,7 +1386,7 @@ function switchIdeasTab(tab) {
     resetTabFilters('#filters-listos');
   } else {
     activateIdeasTab('tab-publicados');
-    document.getElementById('ideas-sub').textContent = 'Historial de contenido publicado y acceso a mÃ©tricas';
+    document.getElementById('ideas-sub').textContent = 'Historial de contenido publicado y acceso a m\u00e9tricas';
     activeFilter = 'pub_all';
     resetTabFilters('#filters-publicados');
   }
@@ -1326,7 +1394,7 @@ function switchIdeasTab(tab) {
 }
 
 function setFilter(f, btn) {
-  activeFilter = f;
+  activeFilter = normalizeReadyFilterValueSafe(normalizeReadyFilterValue(f));
   const container = f.startsWith('pub_')
     ? '#filters-publicados'
     : f.startsWith('ready_')
@@ -1344,17 +1412,17 @@ function renderIdeas() {
     if (activeFilter === 'active_idea')   list = list.filter(p => p.estado === 'idea');
     else if (activeFilter === 'active_grabar') list = list.filter(p => p.estado === 'grabar');
     else if (activeFilter && activeFilter.startsWith('active_') && !['active_all','active_idea','active_grabar'].includes(activeFilter)) {
-      list = list.filter(p => p.pilar === activeFilter.replace('active_',''));
+      list = list.filter(p => matchesPilarFilter(activeFilter, p.pilar));
     }
   } else if (ideasTab === 'listos') {
     list = list.filter(p => p.estado === 'listo');
     if (activeFilter && activeFilter.startsWith('ready_') && activeFilter !== 'ready_all') {
-      list = list.filter(p => p.pilar === activeFilter.replace('ready_',''));
+      list = list.filter(p => matchesPilarFilter(activeFilter, p.pilar));
     }
   } else {
     list = list.filter(p => p.estado === 'publicado');
     if (activeFilter && activeFilter.startsWith('pub_') && activeFilter !== 'pub_all') {
-      list = list.filter(p => p.pilar === activeFilter.replace('pub_',''));
+      list = list.filter(p => matchesPilarFilter(activeFilter, p.pilar));
     }
   }
   const g = document.getElementById('ideas-grid');
