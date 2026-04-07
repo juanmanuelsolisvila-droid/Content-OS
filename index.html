@@ -233,8 +233,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .cal-cell.today{border-color:rgba(200,240,110,0.3);}
 .cal-date{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;}
 .cal-cell.today .cal-date{color:var(--accent);}
-.cal-dot{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
-.cal-dot-story{background:rgba(168,159,245,0.2)!important;color:#f1edff!important;border:1px solid rgba(168,159,245,0.55)!important;border-radius:999px;padding:3px 7px;font-weight:600;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05);}
+.cal-dot{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;border:1px solid transparent;}
+.cal-dot-idea{background:rgba(255,255,255,0.05);color:var(--text2);border-color:rgba(255,255,255,0.08);}
+.cal-dot-grabar{background:rgba(240,144,123,0.16);color:#ffd8cf;border-color:rgba(240,144,123,0.38);}
+.cal-dot-done{background:rgba(200,240,110,0.14);color:#eaffba;border-color:rgba(200,240,110,0.34);}
+.cal-dot-story{border-radius:999px;padding:3px 7px;font-weight:600;border-style:dashed;}
 .fmt-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:6px;vertical-align:middle;}
 .fmt-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 
@@ -250,7 +253,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .week-posts{padding:7px;display:flex;flex-direction:column;gap:5px;min-height:110px;}
 .week-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px;cursor:pointer;transition:border-color 0.12s;}
 .week-card:hover{border-color:var(--border2);}
-.week-card-story{border-color:rgba(168,159,245,0.45);background:linear-gradient(180deg, rgba(168,159,245,0.12), rgba(30,30,27,0.95));box-shadow:inset 3px 0 0 #a89ff5;}
+.week-card-idea{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.09);}
+.week-card-grabar{background:rgba(240,144,123,0.09);border-color:rgba(240,144,123,0.3);box-shadow:inset 3px 0 0 #f0907b;}
+.week-card-done{background:rgba(200,240,110,0.08);border-color:rgba(200,240,110,0.28);box-shadow:inset 3px 0 0 #c8f06e;}
+.week-card-story{outline:1px dashed rgba(255,255,255,0.14);outline-offset:-4px;}
 .week-card-story .week-format{color:#e9e3ff;}
 .week-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .week-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;}
@@ -998,6 +1004,16 @@ function showCalendarCheck(estado) {
   return estado === 'listo' || estado === 'publicado';
 }
 
+function calendarStateClass(estado, prefix) {
+  if (estado === 'grabar') return `${prefix}-grabar`;
+  if (estado === 'listo' || estado === 'publicado') return `${prefix}-done`;
+  return `${prefix}-idea`;
+}
+
+function formatCalendarClass(formato, prefix) {
+  return isStoryFormat(formato) ? `${prefix}-story` : '';
+}
+
 function normalizeFilterValue(value) {
   return value
     .replaceAll('EducaciÃƒÂ³n', 'Educación')
@@ -1277,7 +1293,7 @@ function renderCalendar() {
       onclick="calCellClick(event,'${ds}')">
       <div class="cal-date">${d}</div>
       ${dp.map(p => `<span
-        class="cal-dot badge ${PILAR_CLASS[p.pilar]}${isStoryFormat(p.formato) ? ' cal-dot-story' : ''}"
+        class="cal-dot ${calendarStateClass(p.estado,'cal-dot')} ${formatCalendarClass(p.formato,'cal-dot')}"
         style="font-size:9px;cursor:grab"
         draggable="true"
         data-id="${p.id}"
@@ -1304,7 +1320,7 @@ function renderCalendar() {
       onclick="calCellClick(event,'${ds}')">
       <div class="cal-date" style="color:var(--text3)">${d} <span style="font-size:9px;color:var(--text3)">${MESES[nextMonth].substring(0,3)}</span></div>
       ${dp.map(p => `<span
-        class="cal-dot badge ${PILAR_CLASS[p.pilar]}${isStoryFormat(p.formato) ? ' cal-dot-story' : ''}"
+        class="cal-dot ${calendarStateClass(p.estado,'cal-dot')} ${formatCalendarClass(p.formato,'cal-dot')}"
         style="font-size:9px;cursor:grab;opacity:0.75"
         draggable="true"
         data-id="${p.id}"
@@ -1390,7 +1406,7 @@ function renderWeekly() {
         ondragleave="weekDragLeave(event)"
         ondrop="weekDrop(event,'${ds}')">
         ${dp.map(p => `<div
-          class="week-card${isStoryFormat(p.formato) ? ' week-card-story' : ''}"
+          class="week-card ${calendarStateClass(p.estado,'week-card')} ${formatCalendarClass(p.formato,'week-card')}"
           draggable="true"
           data-id="${p.id}"
           data-date="${ds}"
